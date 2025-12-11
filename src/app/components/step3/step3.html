@@ -1,0 +1,7 @@
+<h4>{{"@for"}} Example</h4>
+
+<div class="d-flex flex-wrap text-nowrap gap-2">
+  @for (p of person; track p) {
+    <app-step2 [person]="p"></app-step2>
+  }
+</div>

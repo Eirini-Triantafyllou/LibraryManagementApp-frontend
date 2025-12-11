@@ -1,0 +1,75 @@
+@if (!doNotShowRest){
+  <div class="container mt-4">
+    <div class="d-flex gap-5 align-items-center">
+      <div class="bg-info p-2">
+        <h1>Library Management App</h1>
+      </div>
+      <div class="bg-success p-2 text-light">
+        <h3>Welcome</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 1 Component -->
+  <div class="container mt-4">
+    <h3>From Step 1 Component</h3>
+    <div class="d-flex gap-5 text-nowrap"></div>
+      <app-step1></app-step1>
+      <app-step1></app-step1>
+      <app-step1></app-step1>
+  </div>
+
+  <!-- Step 2 Component -->
+    <div class="container mt-4">
+      <h3>From Step 2 Component</h3>
+        <div class="d-flex gap-5 text-nowrap">
+          <app-step2 [person]="person1"></app-step2>
+          <app-step2></app-step2>
+          <app-step2 [person]="person2"></app-step2>
+        </div>
+    </div>
+
+    <!-- Step 3 @for -->
+    <div class="container">
+        <h3>From Step 3 Component</h3>
+        <app-step3></app-step3>
+    </div>
+
+    <!-- Step 4 Event Bind -->
+      <div class="container">
+        <h3>From Step 4 Event Bind</h3>
+        <app-step4-event-bind></app-step4-event-bind>
+      </div>
+
+      <!-- Step 5 routing -->
+      <div class="container mt-2">
+        <div class="d-flex flex-column gap-2">
+          <nav class="navbar navbar-dark bg-primary justify-content-between">
+            <a class="navbar-brand ms-3 cursor-pointer" role="button">CF- angular introduction</a>
+          </nav>
+          <div class="d-flex flex-row gap-2">
+            <div class="d-flex flex-column text-nowrap bg-light p-2">
+                <span role="button" routerLink="person-table-example">Step 1</span>
+                <span role="button" routerLink="component-example">Step 2</span>
+            </div>
+              <span class="flex-grow-1 p-2 text-nowrap">
+                <router-outlet></router-outlet>
+              </span>
+          </div>
+        </div>
+      </div>
+    } @else {
+
+     <!-- Final Menu -->
+      <div class="container mt-2">
+        <div class="d-flex flex-column gap-2">
+          <app-navbar></app-navbar>
+          <div class="d-flex flex-row gap-2">
+            <app-list-group-menu class="w-25 text-nowrap"></app-list-group-menu>
+            <div class="flex-grow-1 p-2 text-nowrap w-75">
+              <router-outlet></router-outlet>
+            </div>
+          </div>  
+        </div>
+      </div>
+    }
