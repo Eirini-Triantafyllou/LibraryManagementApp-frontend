@@ -1,3 +1,5 @@
+import { UserRoleEnum } from "../enums/user-role-enum";
+
 export interface User {
   Id: number;
   Username: string;
@@ -8,9 +10,14 @@ export interface User {
   UserRole: UserRole;
 }
 
+// export interface UserRole {
+//   role: string;
+//   active: boolean;
+// }
+
 export interface UserRole {
-  role: string;
-  active: boolean;
+    role: UserRoleEnum;
+    active: boolean;
 }
 
 export interface Credentials {
@@ -21,5 +28,5 @@ export interface Credentials {
 export interface LoggedInUser {
   username: string;
   email: string;
-  roles: UserRole
+  roles: UserRole;
 }
