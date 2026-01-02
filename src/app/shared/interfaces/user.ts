@@ -22,6 +22,7 @@ export interface UserRoleActivity {
     active: boolean;
 }
 
+
 // DTOs
 
 export interface JwtTokenDTO {
@@ -79,28 +80,14 @@ export interface UserFiltersDTO {
 }
 
 
-
-// αυτά είναι από το μάθημα και το πρώτο δικό μου νομιζω,
-// μάλλον τα credentials είναι το αντίστοιχο UserLoginDTO
-// αν δεν κάνω λαθος (και να δω σε τι μπορεί να αντιστοιχεί
-// ο loggedInUser και αν δεν αντιστοιχεί κάπου να το αφήσω 
-// ενεργοποιημένο, και τσεκ για userRole μήπως το αφήσω 
-// και αυτό ανοιχτό)
-
-
-
-// export interface Credentials {
-//   username: string;
-//   password: string;
-// }
-
 export interface LoggedInUser {
   username: string;
   email: string;
   userRole: UserRole;
 }
 
-// pagination (μήπως μπει αλλου)
+
+// pagination
 
 export interface PaginatedResult<T> {
   data: T[];
