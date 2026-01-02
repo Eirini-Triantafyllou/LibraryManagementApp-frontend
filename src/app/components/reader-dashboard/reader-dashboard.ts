@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
-  selector: 'app-reader-dashboard',
+  selector: 'app-reader',
   imports: [RouterLink, RouterLinkActive],
   templateUrl: './reader-dashboard.html',
   styleUrl: './reader-dashboard.css',
