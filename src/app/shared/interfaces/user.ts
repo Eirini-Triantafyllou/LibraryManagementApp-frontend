@@ -8,6 +8,7 @@ export interface User extends BaseEntity {
   username: string;
   email: string;
   password: string;
+  passwordHash: string;
   firstname: string;
   lastname: string; 
   userRole: UserRole;  
@@ -25,6 +26,8 @@ export interface UserRoleActivity {
 
 export interface JwtTokenDTO {
   token: string;
+  user: UserReadOnlyDTO;
+  expiresAt: Date;
 }
 
 export interface UserSignupDTO {
@@ -64,6 +67,7 @@ export interface UpdateUserReaderDTO {
 
 export interface UserLoginDTO {
   username: string;
+  email: string;
   password: string;
   keepLoggedIn: boolean;
 }
@@ -93,7 +97,7 @@ export interface UserFiltersDTO {
 export interface LoggedInUser {
   username: string;
   email: string;
-  roles: UserRole;
+  userRole: UserRole;
 }
 
 // pagination (μήπως μπει αλλου)
