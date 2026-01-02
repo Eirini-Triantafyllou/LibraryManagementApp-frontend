@@ -94,6 +94,7 @@ export class AuthService {
     username: decoded.username || decoded.email || '',
     email: decoded.email || '',
     password: decoded.password || '',
+    passwordHash: decoded.passwordHash || '',
     userRole: decoded.role || decoded.userRole || UserRole.Reader, // Default to Reader
     firstname: decoded.given_name || decoded.firstName || '',
     lastname: decoded.family_name || decoded.lastName || ''
