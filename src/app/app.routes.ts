@@ -1,27 +1,30 @@
 import { Routes } from '@angular/router';
-import { Step1 } from './components/step1/step1';
-import { Step2 } from './components/step2/step2';
-import { Step3 } from './components/step3/step3';
-import { Step4EventBind } from './components/step4-event-bind/step4-event-bind';
-import { Welcome } from './components/welcome/welcome';
-import { Step6SimpleDatatableShow } from './components/step6-simple-datatable-show/step6-simple-datatable-show';
-import { Step7ComponentOutput } from './components/step7-component-output/step7-component-output';
-import { Step9ReactiveForms } from './components/step9-reactive-forms/step9-reactive-forms';
-import { UserLogin } from './components/user-login/user-login';
-import { CreateUser } from './components/create-user/create-user';
+import { LoginUser} from './components/login-user/login-user';
+// import { CreateUser } from './components/create-user/create-user';
 import { authGuard } from './shared/guards/auth-guard';
-import { adminRoleGuard } from './shared/guards/admin-role-guard';
+import { roleGuard } from './shared/guards/role-guard';
+import { UserRole } from './shared/enums/user-role';
+import { ReaderDashboard } from './components/reader-dashboard/reader-dashboard';
+import { LibrarianDashboard } from './components/dashboards/librarian-dashboard/librarian-dashboard';
+
 
 export const routes: Routes = [
-  {path:'person-table-example', component: Step1},
-  {path:'component-example', component: Step2},
-  {path:'for-directive-example', component: Step3},
-  {path:'event-bind-example', component: Step4EventBind},
-  {path:'simple-datatable-example', component: Step6SimpleDatatableShow},
-  {path:'component-output-example', component: Step7ComponentOutput},
-  {path:'reactive-form-example', component: Step9ReactiveForms},
-  {path:'login-example', component: UserLogin},
-  {path:'create-example', component: CreateUser, canActivate:[authGuard, adminRoleGuard]},
-  {path:'welcome', component: Welcome},
-  {path:'', redirectTo:'welcome', pathMatch:'full'}
+  {path:'login-user', component: LoginUser},
+  {path: 'reader/dashboard', 
+   component: ReaderDashboard,
+   canActivate: [authGuard, roleGuard] ,
+   data: { requiredRole: UserRole.Reader}
+   },
+  {path: 'librarian-dashboard', 
+   component: LibrarianDashboard,               
+   canActivate: [authGuard, roleGuard],
+   data: { requiredRole: UserRole.Librarian}
+    },
+  // {path:'admin-dashboard',
+  //   component: AdminDashboard,
+  //  canActivate: [authGuard, roleGuard],    
+  //  data: { requiredRole: UserRole.Admin}
+  //   },
+  // {path: 'unauthorized', component: Unauthorized},        // To Do
+  { path: '', redirectTo: '/login-user', pathMatch: 'full' },
 ];
