@@ -67,7 +67,6 @@ export interface UpdateUserReaderDTO {
 }
 
 export interface UserLoginDTO {
-  username: string;
   email: string;
   password: string;
   keepLoggedIn: boolean;
