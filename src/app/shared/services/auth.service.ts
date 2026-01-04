@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { UserLoginDTO, JwtTokenDTO, User } from '../interfaces/user';
+import { UserLoginDTO, JwtTokenDTO, User, UserReadOnlyDTO, UserSignupDTO } from '../interfaces/user';
 import { environment } from '../../../environments/environment';
 import { UserRole } from '../enums/user-role';
 import { Router } from '@angular/router';
@@ -32,8 +32,6 @@ export class AuthService {
     this.errorMessage.set(null);
 
     const endpoint = `${this.apiUrl}/api/Users/LoginUser`;
-    console.log('Calling endpoint:', endpoint);
-    console.log('With data:', loginData);
 
     const headers = new HttpHeaders({
     'Content-Type': 'application/json',
@@ -47,22 +45,18 @@ export class AuthService {
     tap(response => {
       console.log('Login response:', response);
 
-      if (response?.token) {
-        this.authTokenSignal.set(response.token);
-        
-        // Εξαγωγή χρήστη από το token
-        const user = this.extractUserFromToken(response.token);
-        if (user) {
-          this.currentUserSignal.set(user);
-        }
-        
-        const storage = loginData.keepLoggedIn ? localStorage : sessionStorage;
-        storage.setItem('auth_token', response.token);
-        
-        if (user) {
-          storage.setItem('user_data', JSON.stringify(user));
-        }
-        console.log('User logged in:', user);
+      if (response?.token && response?.user) {
+    localStorage.setItem('authToken', response.token);
+    localStorage.setItem('user', JSON.stringify(response.user));
+
+    // ΑΝΤΙΓΡΑΦΗ: Μετατροπή του UserReadOnlyDTO σε User
+    const user: User = this.adaptToUser(response.user);
+    
+    // Ενημέρωση signals
+    this.authTokenSignal.set(response.token);
+    this.currentUserSignal.set(user);
+    
+    console.log('Data saved to localStorage');
       }
     }),
     catchError((error: HttpErrorResponse) => {
@@ -75,6 +69,29 @@ export class AuthService {
       console.log('Login request completed');
       })
     );
+  }
+
+
+    signUpUser(data:UserSignupDTO): Observable<UserReadOnlyDTO> {
+      const endpoint = `${this.apiUrl}/api/Users/SignUpUser`;
+    return this.http.post<UserReadOnlyDTO>(endpoint, data);   
+    }
+
+
+  // Βοηθητική μέθοδος για μετατροπή UserReadOnlyDTO σε User
+  private adaptToUser(dto: UserReadOnlyDTO): User {
+    return {
+      id: dto.id,
+      email: dto.email,
+      username: dto.username,
+      userRole: dto.userRole,
+      firstname: dto.firstname,
+      lastname: dto.lastname,
+      // Default τιμή password field
+      password: '',
+      address: '',
+      phoneNumber: ''
+    };
   }
 
   private decodeToken(token: string): any {
@@ -94,10 +111,11 @@ export class AuthService {
     username: decoded.username || decoded.email || '',
     email: decoded.email || '',
     password: decoded.password || '',
-    passwordHash: decoded.passwordHash || '',
     userRole: decoded.role || decoded.userRole || UserRole.Reader, // Default to Reader
     firstname: decoded.given_name || decoded.firstName || '',
-    lastname: decoded.family_name || decoded.lastName || ''
+    lastname: decoded.family_name || decoded.lastName || '',
+    address: decoded.address || '',
+    phoneNumber: decoded.phoneNumber || ''
   };
 }
 
@@ -111,9 +129,12 @@ export class AuthService {
     }
   }
 
+  isLoggedIn(): boolean {
+    return localStorage.getItem('authToken') ? true : false;
+  }
 
   async autoLogin(): Promise<boolean> {
-  const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+  const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
 
   if (!token) {
     console.log('No token found');
@@ -131,14 +152,15 @@ export class AuthService {
     // 2. Αποθήκευση token
     this.authTokenSignal.set(token);
     
-    // 3. Διάβασε user από storage
-    const userData = localStorage.getItem('user_data') || sessionStorage.getItem('user_data');
+    // 3. Διάβασε user από local storage
+    const userData = localStorage.getItem('user');
     
     if (userData) {
       // 3α. Αν υπάρχει saved user data
-      const user: User = JSON.parse(userData);
-      this.currentUserSignal.set(user);
-      console.log('Auto-login from saved user data');
+      const dto: UserReadOnlyDTO = JSON.parse(userData);
+          const user: User = this.adaptToUser(dto);
+          this.currentUserSignal.set(user);
+          console.log('Auto-login from saved user data');
       return true;
     } else {
       // 3β. Αλλιώς εξαγωγή από token
@@ -164,12 +186,13 @@ export class AuthService {
     this.currentUserSignal.set(null);
     this.errorMessage.set(null);
 
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_data');
-    sessionStorage.removeItem('auth_token');
-    sessionStorage.removeItem('user_data');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('user');
 
-    this.router.navigate(['Users/LoginUser'])   
+    // this.router.navigate(['Users/LoginUser'])   
+    this.router.navigate(['/login-user']);
   }
 
   private getUserProfile(token: string): Observable<User> {

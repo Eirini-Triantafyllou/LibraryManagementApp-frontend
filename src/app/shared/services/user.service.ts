@@ -1,66 +1,23 @@
-// import { Injectable, inject, signal } from '@angular/core';
-// import { HttpClient } from '@angular/common/http';
-// // import { Credentials, LoggedInUser, User } from '../interfaces/user';
-// import { UserLoginDTO, LoggedInUser, UserReadOnlyDTO } from '../interfaces/user';
-// import { environment } from '../../../environments/environment';
-// import { jwtDecode } from 'jwt-decode';
-// import { Router } from '@angular/router';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { Router } from '@angular/router';
+import { UpdateUserReaderDTO, UserReadOnlyDTO } from '../interfaces/user';
+import { Observable } from 'rxjs';
 
-// const API_LOGIN_URL = `${environment.apiUrl}api/Users/LoginUser`;   //το ειχα απο το μαθημα(περιπου)
-// const API_URL = `${environment.apiUrl}api/Users/SignUpUserReader`;  //το προσθεσα εγω
-// const API_AUTH_URL = `${environment.apiUrl}/api/auth`;
+@Injectable({
+  providedIn: 'root',
+})
+export class UserService {
+  http: HttpClient = inject(HttpClient);
+  router = inject(Router);
 
-// @Injectable({
-//   providedIn: 'root',
-// })
-// export class UserService {
-//   http:HttpClient = inject(HttpClient);
-//   router = inject(Router);
+  private apiUrl = environment.apiUrl;
 
-//   user = signal<LoggedInUser | null>(null);
-
-//   constructor(){
-//     const access_token = localStorage.getItem("access_token");
-
-//     if (access_token){
-//       const decodedTokenSubject = jwtDecode(access_token) as unknown as LoggedInUser;
-//       this.user.set({
-//         username: decodedTokenSubject.username,
-//         email: decodedTokenSubject.email,
-//         roles: decodedTokenSubject.roles
-//       })
-//     }
-//   }
-
-//   loginUser (credentials: UserLoginDTO){
-//     const request = this.http.post<{token:string, user: UserReadOnlyDTO}>(
-//       `${API_AUTH_URL}/login`,credentials
-//     )
-//     return request;
-//   }
-
-//   logoutUser(){
-//     this.user.set(null);
-//     localStorage.removeItem("access_token");
-//     this.router.navigate(['login-example'])
-//   }
-
-//   createUser(data:UserReadOnlyDTO){
-//     return this.http.post<UserReadOnlyDTO>(API_URL, data);   // μήπως το ελέγξω πάλι
-//   }
-
-//   isTokenExpired(): boolean {
-//     const token = localStorage.getItem('access_token');
-//     if (!token) return true;
-
-//     try {
-//       const decoded: any = jwtDecode(token);
-//       const exp = decoded.exp;
-//       const now = Math.floor(Date.now()/1000);
-//       console.log("Now", now, "Exp", exp);
-//       return exp < now
-//     } catch (e) {
-//       return true;
-//     }
-//   }
-// }
+  updateUser(data:UpdateUserReaderDTO): Observable<UserReadOnlyDTO>
+  {
+    const endpoint = `${this.apiUrl}/api/Users/UpdateUser{userId}`;
+    return this.http.put<UserReadOnlyDTO>(endpoint, data);
+  }
+  
+}
