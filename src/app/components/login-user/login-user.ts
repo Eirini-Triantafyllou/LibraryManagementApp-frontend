@@ -3,13 +3,16 @@ import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validatio
 import { AuthService } from '../../shared/services/auth.service';
 import { UserLoginDTO, LoggedInUser, UserReadOnlyDTO } from '../../shared/interfaces/user'
 import { jwtDecode } from 'jwt-decode';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { DashboardService } from '../../shared/services/dashboard.service';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 
 @Component({
   selector: 'app-login-user',
-  imports: [ReactiveFormsModule, RouterLink],
+  standalone: true,
+  imports: [RouterModule,CommonModule, ReactiveFormsModule],
   templateUrl: './login-user.html',
   styleUrl: './login-user.css',
 })
@@ -118,7 +121,7 @@ passwordValidator(): ValidatorFn {
   const loginData: UserLoginDTO = {
     email: this.form.value.email!,
     password: this.form.value.password!,
-    keepLoggedIn: this.form.value.keepLoggedIn ?? false
+    keepLoggedIn: true
   };
 
   console.log('Submitting login:', loginData);
@@ -126,12 +129,15 @@ passwordValidator(): ValidatorFn {
   // 4. ΚΛΗΣΗ AUTH SERVICE
   this.authService.login(loginData).subscribe({
     next: (response) => {
+       
       this.isLoading.set(false);
 
-      this.dashboardService.redirectToUserDashboard();
+      this.dashboardService.redirectToUserDashboard(response.user);
     },
     error: (error) => {
       console.error('Login error:', error);
+      this.isLoading.set(false);
+      this.errorMessage.set(error.error?.message || 'Login failed');
       }
     });
   }
