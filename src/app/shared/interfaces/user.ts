@@ -10,7 +10,9 @@ export interface User extends BaseEntity {
   password: string;
   firstname: string;
   lastname: string; 
-  userRole: UserRole;  
+  userRole: UserRole; 
+  phoneNumber: string;
+  address: string;
 
   reader?: Reader;
   librarian?: Librarian;
@@ -34,7 +36,6 @@ export interface UserSignupDTO {
   username: string;
   email: string;
   password: string;
-  confirmPassword: string;
   firstname: string;
   lastname: string;
   phoneNumber: string;

@@ -4,7 +4,8 @@ export enum UserRole {
   // LIBRARIAN = "Librarian" // string
 
   Reader = 0,
-  Librarian = 1,
-  Admin = 2                  // numeric για να συμβαδίζει με το swagger 
+  Admin = 1,
+  Librarian = 2
+                   // numeric για να συμβαδίζει με το swagger 
 }
 
