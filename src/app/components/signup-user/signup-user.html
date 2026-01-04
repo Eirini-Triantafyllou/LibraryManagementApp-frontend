@@ -1,0 +1,128 @@
+<div>
+  <h4>Create User</h4>
+
+  @if(registrationStatus.message !== "Not attempted yet") {
+    @if(registrationStatus.success){
+      <div class="alert alert-success mt-2 w-50">
+        {{registrationStatus.message}}
+      </div>
+    } @else {
+      <div class="alert alert-danger mt-2 w-50">
+        Error: {{registrationStatus.message}}
+      </div>
+    }
+   } 
+
+  <form class="d-flex flex-column" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Username</mat-label>
+      <input type="text" matInput formControlName="username"
+      placeholder="Enter username">
+      @if (form.get('username')?.hasError('required') && 
+       form.get('username')?.touched) {
+    <mat-error>Username is required</mat-error>
+  }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input type="email" matInput formControlName="email"
+      placeholder="Enter email">
+       @if (form.get('email')?.hasError('required') && 
+       form.get('email')?.touched) {
+    <mat-error>Email is required</mat-error>
+  }
+  @if (form.get('email')?.hasError('email') && 
+       form.get('email')?.touched) {
+    <mat-error>Please enter a valid email</mat-error>
+  }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Password</mat-label>
+      <input 
+      type="password" 
+      matInput 
+      formControlName="password"
+      placeholder="Enter password">
+      @if (form.get('password')?.touched) {
+      @if (form.get('password')?.hasError('required')) {
+      <mat-error>Password is required and must be at least 8 characters long (must contain at least 1 digit, 1 uppercase letter, 1 lowercase letter and 1 special character) </mat-error>
+      }
+    }
+    </mat-form-field>
+    
+    <mat-form-field appearance="outline">
+      <mat-label>Confirm Password</mat-label>
+      <input type="password" matInput formControlName="confirmPassword"
+      placeholder="Confirm password">
+      @if(form.get('confirmPassword')?.hasError("passwordMissmatch")){
+        <mat-error>Passwords do not match</mat-error>
+      } @else {
+        @if (form.get("confirmPassword")?.touched && form.get("confirmPassword")?.invalid){
+          <mat-error>Confirm Password is missing or invalid</mat-error>
+        } 
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Firstname</mat-label>
+      <input type="text" matInput formControlName="firstname"
+      placeholder="Enter firstname">
+      <mat-error>Firstname is required and must be between 2-50 characters</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Lastname</mat-label>
+      <input type="text" matInput formControlName="lastname"
+      placeholder="Enter lastname">
+      <mat-error>Lastname is required and must be between 2-50 characters</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>PhoneNumber</mat-label>
+      <input type="text" matInput formControlName="phoneNumber"
+      placeholder="Enter phonenumber">
+      <mat-error>PhoneNumber is required and must be between 10-15 digits</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Address</mat-label>
+      <input type="text" matInput formControlName="address"
+      placeholder="Enter address">
+      <mat-error>Address is required and must be between 5-200 characters</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>UserRole</mat-label>
+      <input type="text" matInput formControlName="userRole"
+      placeholder="Enter role">
+      <mat-error>Role is required and must be 0 for Reader, 1 for Librarian, 2 for Admin</mat-error>
+    </mat-form-field>
+
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      class="mt-3"
+      [disabled]="!form.valid"
+      >
+      Submit 
+    </button>
+  </form>
+
+    <div class="text-center mt-2">
+      <small class="text-muted">
+      Already have an account? 
+      </small>
+      <br>
+      <a 
+      routerLink="/login-user" 
+      class="btn btn-outline-secondary btn-sm mt-2 mb-3"
+      >
+      Back to Login
+      </a>
+    </div>
+
+</div>
