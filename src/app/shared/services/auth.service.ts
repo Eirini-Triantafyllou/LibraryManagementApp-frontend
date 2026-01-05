@@ -181,6 +181,27 @@ export class AuthService {
   }
 }
 
+  getCurrentUserId(): string {
+      //από signal
+  const userFromSignal = this.currentUserSignal();
+  if (userFromSignal?.id) {
+    return userFromSignal.id.toString();
+  }
+  
+  //από localStorage
+  const userStr = localStorage.getItem('user');
+  if (userStr) {
+    try {
+      const user = JSON.parse(userStr);
+      return user?.id?.toString() || '';
+    } catch {
+      return '';
+    }
+  }
+  // Fallback
+  return '';
+  }
+
   logout(): void {
     this.authTokenSignal.set(null);
     this.currentUserSignal.set(null);
