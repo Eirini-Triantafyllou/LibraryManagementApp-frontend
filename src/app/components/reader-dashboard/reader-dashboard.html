@@ -1,49 +1,34 @@
-<!-- <app-navbar></app-navbar>
-
-<div class="list-group w-25 mt-3">
-  @for (entry of menu; track entry){
-    <a
-     class="list-group-item list-group-item-action text-truncate"
-     [routerLink]="entry.link"
-     [routerLinkActive]="['active']"
-    >{{entry.text}}</a>
-  }
-
-  <main class="main-content">
-    <router-outlet></router-outlet>
-  </main>
-</div>
-
-<app-footer></app-footer> -->
-
 <app-navbar></app-navbar>
 
-<div class="container-fluid mt-3">
-  <div class="row">
-    <!-- Στήλη μενού -->
-    <div class="col-md-3 col-lg-2">
-      <div class="list-group">
-        @for (entry of menu; track entry) {
-          <a
-            class="list-group-item list-group-item-action"
-            [routerLink]="['/reader', entry.link]"
-            [routerLinkActive]="['active']"
-          >
-            {{entry.text}}
-          </a>
-        }
-      </div>
-    </div>
-    
-    <!-- Στήλη περιεχομένου -->
-    <div class="col-md-9 col-lg-10">
-      <div class="card">
-        <div class="card-body">
-          <router-outlet></router-outlet>
+    <div class="container-fluid mt-3">
+      <div class="row">
+        <!-- Στήλη μενού -->
+        <div class="col-md-3 col-lg-2">
+          <div class="list-group">
+            @for (entry of menu; track entry) {
+              <a
+                class="list-group-item list-group-item-action"
+                [routerLink]="[entry.link]" 
+                [routerLinkActive]="['active']"
+                [routerLinkActiveOptions]="{ exact: false }"
+              >
+                {{entry.text}}
+              </a>
+            }
+          </div>
+        </div>
+        
+        <!-- Στήλη περιεχομένου -->
+        <div class="col-md-9 col-lg-10">
+          <div class="card">
+            <div class="card-body pb-5">
+              <router-outlet></router-outlet>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
 
-<app-footer></app-footer>
+    <app-footer class="mt-auto"></app-footer>
+
+   
