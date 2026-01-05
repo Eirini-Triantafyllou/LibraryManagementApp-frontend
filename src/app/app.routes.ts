@@ -7,6 +7,7 @@ import { ReaderDashboard } from './components/reader-dashboard/reader-dashboard'
 import { LibrarianDashboard } from './components/librarian-dashboard/librarian-dashboard';
 import { SignupUser } from './components/signup-user/signup-user';
 import { UpdateUser } from './components/update-user/update-user';
+import { ReaderHome } from './components/reader-home/reader-home';
 
 
 export const routes: Routes = [
@@ -14,9 +15,14 @@ export const routes: Routes = [
   {path:'signup-user', component: SignupUser},
   {path: 'reader-dashboard', 
    component: ReaderDashboard,
+   canActivate: [authGuard],
    children: [
+    { 
+      path: '', 
+      component: ReaderHome
+      },
     {
-      path: 'update-user',
+      path: 'update-user/:userId',
         loadComponent: () => import('./components/update-user/update-user')
           .then(m => m.UpdateUser)
     },

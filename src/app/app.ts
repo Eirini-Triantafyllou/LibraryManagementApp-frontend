@@ -35,18 +35,9 @@ import { UpdateUser } from './components/update-user/update-user';
 export class App {
   protected readonly title = signal('LibraryManagementApp-frontend');
 
-//   authService = inject(AuthService);
-//   dashboardService = inject(DashboardService);
+userRole: any;
+user: any;
 
-// userRole: any;
-// user: any;
 
-//   isLoggedIn(): boolean {
-//     return this.authService.isLoggedIn();
-//   }
-
-//   getUserRole(): string {
-//     return this.dashboardService.getUserRoleString();
-//   }
   
 }
