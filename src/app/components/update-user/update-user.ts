@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UserService } from '../../shared/services/user.service';
 import { 
   FormControl, 
@@ -7,12 +7,13 @@ import {
   ReactiveFormsModule, 
   Validators 
 } from '@angular/forms';
-import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { UpdateUserReaderDTO, UserReadOnlyDTO } from '../../shared/interfaces/user';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 
 
 @Component({
@@ -29,8 +30,11 @@ import { CommonModule } from '@angular/common';
   templateUrl: './update-user.html',
   styleUrl: './update-user.css',
 })
-export class UpdateUser {
+export class UpdateUser implements OnInit {
   userService = inject(UserService);
+  router = inject(Router);
+  route = inject(ActivatedRoute);
+  userId: string = '';
 
     updateStatus: {success: boolean, message:string} = {
       success: false,
@@ -46,6 +50,18 @@ export class UpdateUser {
       address: new FormControl('', [Validators.required, Validators.minLength(5), Validators.maxLength(200)])
     });
 
+    ngOnInit(): void {
+      this.userId = this.route.snapshot.params['userId'];
+      
+      if (!this.userId) {
+        console.error('No userId found in route parameters');
+        this.updateStatus = {
+          success: false,
+          message: "User ID is missing. Please navigate from a valid user list."
+          };
+        }
+      }
+
     onSubmit(){
       if (this.form.invalid) {
         this.form.markAllAsTouched();  
@@ -54,6 +70,14 @@ export class UpdateUser {
         message: "Please fill all required fields correctly"
       };
         return;
+      }
+
+      if (!this.userId) {
+      this.updateStatus = {
+        success: false,
+        message: "Cannot update: User ID is missing"
+        };
+      return;
       }
 
       const formValue = this.form.value;
@@ -66,7 +90,7 @@ export class UpdateUser {
         address: formValue.address!
       }
 
-      this.userService.updateUser(user).subscribe({
+      this.userService.updateUser(this.userId, user).subscribe({
         next: (response) => {
           this.form.reset();
           console.log('User updated:', response);
@@ -87,5 +111,8 @@ export class UpdateUser {
         }
       })
     }
-    
+
+    onCancel(): void {
+    this.router.navigate(['login-user']);
+  }   
 }
