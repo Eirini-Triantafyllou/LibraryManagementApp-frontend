@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment.development';
 import { Router } from '@angular/router';
 import { UpdateUserReaderDTO, UserReadOnlyDTO } from '../interfaces/user';
 import { Observable } from 'rxjs';
