@@ -87,15 +87,6 @@ export interface LoggedInUser {
 }
 
 
-// pagination
-
-export interface PaginatedResult<T> {
-  data: T[];
-  totalRecords: number;
-  pageNumber: number;
-  pageSize: number;
-}
-
 export interface TokenResponse {
   token: string;
   userId: number;
