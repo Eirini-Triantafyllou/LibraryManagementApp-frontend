@@ -15,3 +15,16 @@ export interface Book extends BaseEntity {
   author?: Author;
   readers?: Reader[];
 }
+
+// DTO
+
+export interface BookByAuthorDTO {
+  id: number;
+  title: string;
+  description: string;
+  isbn: string;
+  publishedDate: Date;
+  copiesAvailable: number;
+  authorName: string;
+  authorId: number;
+}
