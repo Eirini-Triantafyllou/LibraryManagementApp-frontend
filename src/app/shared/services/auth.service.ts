@@ -72,8 +72,8 @@ export class AuthService {
   }
 
 
-    signUpUser(data:UserSignupDTO): Observable<UserReadOnlyDTO> {
-      const endpoint = `${this.apiUrl}/api/Users/SignUpUser`;
+  signUpUser(data:UserSignupDTO): Observable<UserReadOnlyDTO> {
+    const endpoint = `${this.apiUrl}/api/Users/SignUpUser`;
     return this.http.post<UserReadOnlyDTO>(endpoint, data);   
     }
 
@@ -130,56 +130,56 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return localStorage.getItem('authToken') ? true : false;
-  }
+      return localStorage.getItem('authToken') ? true : false;
+    }
 
   async autoLogin(): Promise<boolean> {
-  const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+    const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
 
-  if (!token) {
-    console.log('No token found');
-    return false;
-  }
+    if (!token) {
+      console.log('No token found');
+      return false;
+    }
 
-  try {
-    // 1. Έλεγχος expiry
-    if (this.isTokenExpired(token)) {
-      console.log('Token expired');
+    try {
+      // 1. Έλεγχος expiry
+      if (this.isTokenExpired(token)) {
+        console.log('Token expired');
+        this.logout();
+        return false;
+      }
+      
+      // 2. Αποθήκευση token
+      this.authTokenSignal.set(token);
+      
+      // 3. Διάβασε user από local storage
+      const userData = localStorage.getItem('user');
+      
+      if (userData) {
+        // 3α. Αν υπάρχει saved user data
+        const dto: UserReadOnlyDTO = JSON.parse(userData);
+            const user: User = this.adaptToUser(dto);
+            this.currentUserSignal.set(user);
+            console.log('Auto-login from saved user data');
+        return true;
+      } else {
+        // 3β. Αλλιώς εξαγωγή από token
+        const user = this.extractUserFromToken(token);
+        if (user) {
+          this.currentUserSignal.set(user);
+          console.log('Auto-login from token extraction');
+          return true;
+        }
+        
+        console.log('Cannot extract user from token');
+        return false;
+      }
+    } catch (error) {
+      console.error('Auto-login error:', error);
       this.logout();
       return false;
     }
-    
-    // 2. Αποθήκευση token
-    this.authTokenSignal.set(token);
-    
-    // 3. Διάβασε user από local storage
-    const userData = localStorage.getItem('user');
-    
-    if (userData) {
-      // 3α. Αν υπάρχει saved user data
-      const dto: UserReadOnlyDTO = JSON.parse(userData);
-          const user: User = this.adaptToUser(dto);
-          this.currentUserSignal.set(user);
-          console.log('Auto-login from saved user data');
-      return true;
-    } else {
-      // 3β. Αλλιώς εξαγωγή από token
-      const user = this.extractUserFromToken(token);
-      if (user) {
-        this.currentUserSignal.set(user);
-        console.log('Auto-login from token extraction');
-        return true;
-      }
-      
-      console.log('Cannot extract user from token');
-      return false;
-    }
-  } catch (error) {
-    console.error('Auto-login error:', error);
-    this.logout();
-    return false;
   }
-}
 
   getCurrentUserId(): string {
       //από signal
@@ -203,23 +203,23 @@ export class AuthService {
   }
 
   logout(): void {
-    this.authTokenSignal.set(null);
-    this.currentUserSignal.set(null);
-    this.errorMessage.set(null);
+      this.authTokenSignal.set(null);
+      this.currentUserSignal.set(null);
+      this.errorMessage.set(null);
 
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    sessionStorage.removeItem('authToken');
-    sessionStorage.removeItem('user');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+      sessionStorage.removeItem('authToken');
+      sessionStorage.removeItem('user');
 
-    // this.router.navigate(['Users/LoginUser'])   
-    this.router.navigate(['/login-user']);
-  }
+      // this.router.navigate(['Users/LoginUser'])   
+      this.router.navigate(['/login-user']);
+    }
 
   private getUserProfile(token: string): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/api/Users/Profile`, {
     headers: { 'Authorization': `Bearer ${token}` }
-  });
+    });
   }
 
   private isTokenExpired(token: string): boolean {
@@ -231,9 +231,9 @@ export class AuthService {
 
       const expiryTime = decoded.exp * 1000;
       return Date.now() >= expiryTime;
-      } catch (error) {
-      return true;
-      }
+       } catch (error) {
+        return true;
+        }
     }
 
      // Utility methods για authorization

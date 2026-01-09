@@ -29,7 +29,7 @@ export class BookService {
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());
 
-    const endpoint = `${this.apiUrl}/api/Books/SearchBookByAuthorName`;
+    const endpoint = `${this.apiUrl}/api/Books/SearchBooksByAuthorName`;
 
     return this.http.get<PaginatedResult<BookByAuthorDTO>>(endpoint, { params });
   }
