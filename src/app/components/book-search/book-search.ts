@@ -13,7 +13,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { WishlistService } from '../../shared/services/wishlist.service';
+import { AuthService } from '../../shared/services/auth.service';
+import { MatMenuModule } from '@angular/material/menu';
 
 
 @Component({
@@ -31,18 +34,25 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     MatTableModule,
     MatPaginatorModule,
     MatTooltipModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatMenuModule
   ],
   templateUrl: './book-search.html',
   styleUrl: './book-search.css',
 })
 export class BookSearch implements OnInit {
   bookService = inject(BookService);
+  wishlistService = inject(WishlistService);
+  authService = inject(AuthService);
+
   loading = false;
   errorMessage = '';
+  successMessage = '';
   searchResults: PaginatedResult<BookByAuthorDTO> | null = null;
 
-  displayedColumns: string[] = ['title', 'authorName', 'isbn', 'publishedDate', 'copiesAvailable'];
+  loadingBookId: number | null = null;
+
+  displayedColumns: string[] = ['title', 'authorName', 'isbn', 'publishedDate', 'copiesAvailable', 'wishlist'];
 
   // Pagination
   currentPage = 1;
@@ -71,6 +81,7 @@ export class BookSearch implements OnInit {
 
     this.loading = true;
     this.errorMessage = '';
+    this.successMessage = '';
     this.currentPage = pageNumber;
 
     this.bookService.searchBooksByAuthor(authorName, pageNumber, this.pageSize)
@@ -91,6 +102,54 @@ export class BookSearch implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+   toggleWishlist(book: BookByAuthorDTO): void {
+    this.loadingBookId = book.id;
+    
+    const isCurrentlyInWishlist = book.isInWishlist || false;
+    
+    if (isCurrentlyInWishlist) {
+      this.removeFromWishlist(book);
+    } else {
+      this.addToWishlist(book);
+    }
+  }
+
+  private addToWishlist(book: BookByAuthorDTO): void {
+    this.wishlistService.addToWishlist(book.id)
+      .subscribe({
+          next: () => {
+            book.isInWishlist = true;
+            this.successMessage = `Το βιβλίο "${book.title}" προστέθηκε στη wishlist!`;
+            this.loadingBookId = null;
+            setTimeout(() => this.successMessage = '', 2000);
+          },
+         error: (error) => {
+          console.error('Error adding to wishlist:', error);
+          this.loadingBookId = null;
+          this.errorMessage = error.userMessage || 'Σφάλμα προσθήκης στη wishlist';
+          setTimeout(() => this.errorMessage = '', 3000);
+         }
+      });
+  }
+
+  private removeFromWishlist(book: BookByAuthorDTO): void {
+    this.wishlistService.removeFromWishlist(book.id)
+      .subscribe({ 
+        next: () => {
+          book.isInWishlist = false;
+          this.successMessage = `Το βιβλίο "${book.title}" αφαιρέθηκε από τη wishlist`;
+          this.loadingBookId = null;
+          setTimeout(() => this.successMessage = '', 2000);
+        },
+        error: (error) => {
+          console.error('Error removing from wishlist:', error);
+        this.loadingBookId = null;
+        this.errorMessage = error.userMessage || 'Σφάλμα αφαίρεσης από τη wishlist';
+        setTimeout(() => this.errorMessage = '', 3000);
+        }
+      })
   }
 
   onPageChange(page: number): void {
@@ -118,5 +177,4 @@ export class BookSearch implements OnInit {
     
     return pages;
   }
-
 }

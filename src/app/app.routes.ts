@@ -8,6 +8,8 @@ import { LibrarianDashboard } from './components/librarian-dashboard/librarian-d
 import { SignupUser } from './components/signup-user/signup-user';
 import { UpdateUser } from './components/update-user/update-user';
 import { ReaderHome } from './components/reader-home/reader-home';
+import { BookSearch } from './components/book-search/book-search';
+import { Wishlist } from './components/wishlist/wishlist';
 
 
 export const routes: Routes = [
@@ -19,8 +21,17 @@ export const routes: Routes = [
    children: [
     { 
       path: '', 
-      component: ReaderHome
+      component: ReaderHome,
+      pathMatch: 'full'
       },
+    { 
+      path: 'search-books', 
+      component: BookSearch
+      },  
+    {
+      path: 'wish-list',
+      component: Wishlist
+    },
     {
       path: 'update-user/:userId',
         loadComponent: () => import('./components/update-user/update-user')
