@@ -27,4 +27,5 @@ export interface BookByAuthorDTO {
   copiesAvailable: number;
   authorName: string;
   authorId: number;
+  isInWishlist?: boolean;
 }
