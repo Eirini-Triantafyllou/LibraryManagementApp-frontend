@@ -13,6 +13,7 @@ import { WishlistService } from '../../shared/services/wishlist.service';
 import { WishlistItemDTO } from '../../shared/interfaces/wishlist';
 import { AppError, ApiResponse } from '../../shared/interfaces/errors';
 import { Router, RouterModule } from '@angular/router';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-wishlist',
@@ -36,8 +37,8 @@ export class Wishlist {
   wishlistService = inject(WishlistService);
   snackBar = inject(MatSnackBar);
   router = inject(Router);
+  cdr = inject(ChangeDetectorRef);
   
-
   loading = false;
   errorMessage = '';
 
@@ -50,12 +51,14 @@ export class Wishlist {
   loadWishlist(): void {
     this.loading = true;
     this.errorMessage = '';
+    this.cdr.detectChanges();
 
-    this.wishlistService.getUserWishlist()
+    const subscription = this.wishlistService.getUserWishlist()
       .subscribe({
         next: (items) => {
           this.wishlistItems = items;
           this.loading = false;
+          this.cdr.detectChanges();
 
           if (items.length === 0) {
             this.showSnackbar('Η λίστα επιθυμητών σας είναι άδεια. Προσθέστε βιβλία', 'info');
@@ -64,6 +67,7 @@ export class Wishlist {
         error: (error: AppError) => {
           this.handleLoadError(error);
           this.loading = false;
+          this.cdr.detectChanges();
         }
       })
   }
@@ -100,9 +104,11 @@ export class Wishlist {
   this.wishlistService.removeFromWishlist(item.id).subscribe({
     next: () => {
       this.wishlistItems = this.wishlistItems.filter(i => i.id !== item.id);
+      this.cdr.detectChanges();
       this.snackBar.open('Αφαιρέθηκε!', 'OK', { duration: 2000 });
     },
     error: (error) => {
+      this.cdr.detectChanges();
       this.snackBar.open('Σφάλμα: ' + error.userMessage, 'Κλείσιμο');
       }
     });

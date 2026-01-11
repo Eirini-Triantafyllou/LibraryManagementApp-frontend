@@ -75,15 +75,19 @@ export class WishlistService {
     const endpoint = `${this.apiUrl}/api/Wishlist/GetUserWishlist`;
 
     return this.http.get<WishlistItemDTO[]>(endpoint).pipe(
-      catchError(this.handleError.bind(this))
+      catchError((error: HttpErrorResponse) => {
+        return this.handleError(error);
+      })
     );
   }
   
   checkIfInWishlist(bookId: number): Observable<boolean> {
-    const endpoint = `${this.apiUrl}/api/Wishlist/checkIfInWishlist/${bookId}`;
+    const endpoint = `${this.apiUrl}/api/Wishlist/CheckIfInWishlist/${bookId}`;
 
     return this.http.get<boolean>(endpoint).pipe(
-      catchError(this.handleError.bind(this))
+      catchError((error: HttpErrorResponse) => {
+        return this.handleError(error);
+      })
     );
   }
 
@@ -91,7 +95,9 @@ export class WishlistService {
     const endpoint = `${this.apiUrl}/api/Wishlist/AddToWishlist/${bookId}`;
 
     return this.http.post<any>(endpoint, {}).pipe(
-      catchError(this.handleError.bind(this))
+      catchError((error: HttpErrorResponse) => {
+        return this.handleError(error);
+      })
     );
   }
 
@@ -99,8 +105,9 @@ export class WishlistService {
     const endpoint = `${this.apiUrl}/api/Wishlist/RemoveFromWishlist/${bookId}`;
 
     return this.http.delete<any>(endpoint).pipe(
-      catchError(this.handleError.bind(this))
+      catchError((error: HttpErrorResponse) => {
+        return this.handleError(error);
+      })
     );
   }
-
 }
