@@ -1,31 +1,4 @@
-<!-- <div class="container mt-2">
-  <div class="d-flex flex-column gap-2">
-    <app-navbar></app-navbar>
-      @if (!isLoggedIn()) {
-      <div class="mb-5">
-        <app-login-user></app-login-user>
-      </div>
-    }
-    
-    @if (isLoggedIn()) {
-      @switch (getUserRole()) {
-        @case ('Reader') {
-          <app-reader-dashboard></app-reader-dashboard>
-        }
-        @case ('Librarian') {
-          <app-librarian-dashboard></app-librarian-dashboard>
-        }
-        @case ('Admin') {
-          <app-admin-dashboard></app-admin-dashboard>
-        }
-      }
-    }
-    </div>
-  </div> -->
-
-  <div class="container mt-2">
-  <!-- <app-navbar></app-navbar> -->
-  
+<div class="container mt-2">
   <router-outlet></router-outlet>
 </div>
 
