@@ -10,6 +10,8 @@ import { UpdateUser } from './components/update-user/update-user';
 import { ReaderHome } from './components/reader-home/reader-home';
 import { BookSearch } from './components/book-search/book-search';
 import { Wishlist } from './components/wishlist/wishlist';
+import { LibrarianHome } from './components/librarian-home/librarian-home';
+import { ReaderSearch } from './components/reader-search/reader-search';
 
 
 export const routes: Routes = [
@@ -17,7 +19,8 @@ export const routes: Routes = [
   {path:'signup-user', component: SignupUser},
   {path: 'reader-dashboard', 
    component: ReaderDashboard,
-   canActivate: [authGuard],
+   canActivate: [authGuard, roleGuard],
+    data: { requiredRole: UserRole.Reader},
    children: [
     { 
       path: '', 
@@ -38,14 +41,27 @@ export const routes: Routes = [
           .then(m => m.UpdateUser)
     },
    ]
-  //  canActivate: [authGuard, roleGuard] ,
-  //  data: { requiredRole: UserRole.Reader}
    },
   {path: 'librarian-dashboard', 
    component: LibrarianDashboard,               
-  //  canActivate: [authGuard, roleGuard],
-  //  data: { requiredRole: UserRole.Librarian}
-    },
+   canActivate: [authGuard, roleGuard],
+   data: { requiredRole: UserRole.Librarian},
+   children: [
+    { 
+      path: '', 
+      component: LibrarianHome,
+      pathMatch: 'full'
+      },
+    { 
+      path: 'search-readers', 
+      component: BookSearch
+      },  
+    { 
+      path: 'search-books', 
+      component: ReaderSearch
+      },  
+    ]
+  },
   // {path:'admin-dashboard',
   //   component: AdminDashboard,
   //  canActivate: [authGuard, roleGuard],    
