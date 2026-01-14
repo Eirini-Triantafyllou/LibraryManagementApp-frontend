@@ -46,17 +46,19 @@ export class AuthService {
       console.log('Login response:', response);
 
       if (response?.token && response?.user) {
-    localStorage.setItem('authToken', response.token);
-    localStorage.setItem('user', JSON.stringify(response.user));
+        localStorage.setItem('authToken', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
 
-    // ΑΝΤΙΓΡΑΦΗ: Μετατροπή του UserReadOnlyDTO σε User
-    const user: User = this.adaptToUser(response.user);
-    
-    // Ενημέρωση signals
-    this.authTokenSignal.set(response.token);
-    this.currentUserSignal.set(user);
-    
-    console.log('Data saved to localStorage');
+        // ΑΝΤΙΓΡΑΦΗ: Μετατροπή του UserReadOnlyDTO σε User
+        const user: User = this.adaptToUser(response.user);
+        
+        this.authTokenSignal.set(response.token);
+        this.currentUserSignal.set(user);
+        
+        console.log('User authenticated:', user);
+        
+        // ΑΥΤΟΜΑΤΟ REDIRECT ΜΕΤΑ ΤΟ LOGIN
+        this.redirectToDashboard(user.userRole.toString());
       }
     }),
     catchError((error: HttpErrorResponse) => {
@@ -69,6 +71,27 @@ export class AuthService {
       console.log('Login request completed');
       })
     );
+  }
+
+  private redirectToDashboard(role: string): void {
+    setTimeout(() => {
+      console.log('AuthService redirecting to:', role);
+      
+      switch(role) {
+        case 'Reader':
+          this.router.navigate(['/reader-dashboard']);
+          break;
+        case 'Librarian':
+          this.router.navigate(['/librarian-dashboard']);
+          break;
+        case 'Admin':
+          this.router.navigate(['/admin-dashboard']);
+          break;
+        default:
+          console.error('Unknown role:', role);
+          this.router.navigate(['/login-user']);
+      }
+    }, 100);
   }
 
 
@@ -142,35 +165,31 @@ export class AuthService {
     }
 
     try {
-      // 1. Έλεγχος expiry
       if (this.isTokenExpired(token)) {
         console.log('Token expired');
         this.logout();
         return false;
       }
       
-      // 2. Αποθήκευση token
       this.authTokenSignal.set(token);
       
-      // 3. Διάβασε user από local storage
       const userData = localStorage.getItem('user');
       
       if (userData) {
-        // 3α. Αν υπάρχει saved user data
+        // Αν υπάρχουν saved user data
         const dto: UserReadOnlyDTO = JSON.parse(userData);
             const user: User = this.adaptToUser(dto);
             this.currentUserSignal.set(user);
             console.log('Auto-login from saved user data');
         return true;
       } else {
-        // 3β. Αλλιώς εξαγωγή από token
+        // Αλλιώς εξαγωγή από token
         const user = this.extractUserFromToken(token);
         if (user) {
           this.currentUserSignal.set(user);
           console.log('Auto-login from token extraction');
           return true;
         }
-        
         console.log('Cannot extract user from token');
         return false;
       }
@@ -198,7 +217,6 @@ export class AuthService {
       return '';
     }
   }
-  // Fallback
   return '';
   }
 
@@ -211,8 +229,7 @@ export class AuthService {
       localStorage.removeItem('user');
       sessionStorage.removeItem('authToken');
       sessionStorage.removeItem('user');
-
-      // this.router.navigate(['Users/LoginUser'])   
+  
       this.router.navigate(['/login-user']);
     }
 
@@ -236,37 +253,39 @@ export class AuthService {
         }
     }
 
-     // Utility methods για authorization
   hasRole(role: UserRole): boolean {
     const user = this.currentUserSignal();
-    const userRole = Number(user?.userRole);
-    return userRole === role;
-  }
-
-  isAdmin(): boolean {
-    return this.hasRole(UserRole.Admin);
-  }
-
-  isLibrarian(): boolean {
-    return this.hasRole(UserRole.Librarian);
-  }
-  
-  isReader(): boolean {
-    return this.hasRole(UserRole.Reader);
+    
+    if (!user?.userRole) return false;
+    
+    // If userRole is string ("Reader", "Librarian"), convert to number
+    let userRoleNum: number;
+    
+    if (typeof user.userRole === 'string') {
+      switch(user.userRole) {
+        case 'Reader': userRoleNum = 0; break;
+        case 'Admin': userRoleNum = 1; break;
+        case 'Librarian': userRoleNum = 2; break;
+        default: userRoleNum = 0;
+      }
+    } else {
+      userRoleNum = Number(user.userRole);
+    }
+    
+    return userRoleNum === role;
   }
 
   private handleError(error: any): void {
     console.error('Auth Service Error:', error);
     
-    // Δημιουργία Map με τα error messages
-  const errorMessages = new Map<number | string, string>([
-    [0, 'Cannot connect to server. Please check your internet connection.'],
-    [401, 'Invalid username or password'],
-    [403, 'You do not have permission to perform this action'],
-    [404, 'Resource not found'],
-    [409, 'User already exists'],
-    [429, 'Too many requests. Please try again later.'],
-    [500, 'Server error. Please try again later']
+    const errorMessages = new Map<number | string, string>([
+      [0, 'Cannot connect to server. Please check your internet connection.'],
+      [401, 'Invalid username or password'],
+      [403, 'You do not have permission to perform this action'],
+      [404, 'Resource not found'],
+      [409, 'User already exists'],
+      [429, 'Too many requests. Please try again later.'],
+      [500, 'Server error. Please try again later']
   ]);
 
   const userMessage = errorMessages.get(error.status) || 'An unexpected error occurred';
