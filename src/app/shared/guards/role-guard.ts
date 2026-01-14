@@ -1,29 +1,34 @@
 import { inject } from '@angular/core';
-import { CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { UserRole } from '../enums/user-role';
-import { DashboardService } from '../services/dashboard.service';
 
 
 export const roleGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
-  const dashboardService = inject(DashboardService);
+  const router = inject(Router);
 
-// ΈΛΕΓΧΟΣ ΑΝ ΕΙΝΑΙ LOGGED IN/ AUTHENTICATED (θα έχει περάσει ήδη από authGuard)
   if (!authService.isAuthenticated()) {
     return false;
   }
 
-// ΕΛΕΓΧΟΣ ΑΝ ΖΗΤΕΊΤΑΙ ΣΥΓΚΕΚΡΙΜΕΝΟ ROLE
+// check if particular role is required
   const requiredRole = route.data?.['requiredRole'] as UserRole;
 
- // ΕΛΕΓΧΟΣ ΑΝ Ο ΧΡΗΣΤΗΣ ΕΧΕΙ ΤΟΝ ΑΠΑΙΤΟΥΜΕΝΟ ROLE
-  if (authService.hasRole(requiredRole)) {
+  if (!requiredRole) {
+    console.log('Role Guard: No required role specified, allowing access');
     return true;
   }
 
-  // ΑΝ ΔΕΝ ΕΧΕΙ ΤΟΝ ΣΩΣΤΟ ROLE, REDIRECT ΣΤΟ DASHBOARD ΤΟΥ
-  dashboardService.redirectToUserDashboard();
+  // check if user has required role
+  const user = authService.currentUserSignal();
+
+  if (authService.hasRole(requiredRole)) {
+    console.log('Role Guard: Access granted');
+    return true;
+  }
+
+  router.navigate(['/unauthorized']);
   return false;
 };  
 
