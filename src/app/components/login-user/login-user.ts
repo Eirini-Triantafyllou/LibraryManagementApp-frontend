@@ -4,7 +4,6 @@ import { AuthService } from '../../shared/services/auth.service';
 import { UserLoginDTO, LoggedInUser, UserReadOnlyDTO } from '../../shared/interfaces/user'
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
-import { DashboardService } from '../../shared/services/dashboard.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -20,9 +19,7 @@ import { RouterModule } from '@angular/router';
 export class LoginUser {
   authService = inject(AuthService);
   router = inject(Router);
-  dashboardService = inject(DashboardService);
 
-  // Χρήση signals για state management
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
 
@@ -43,13 +40,12 @@ email: any;
 password: any;
 
 
-  // Custom validator για password
 passwordValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
     
     if (!value) {
-      return null; // Οι required validators θα το χειριστούν
+      return null;
     }
 
     const hasUpperCase = /[A-Z]/.test(value);
@@ -70,7 +66,6 @@ passwordValidator(): ValidatorFn {
   };
 }
 
-// Helper method για error messages
   getErrorMessage(controlName: string): string {
     const control = this.form.get(controlName);
     
@@ -107,18 +102,16 @@ passwordValidator(): ValidatorFn {
   }
 
   onSubmit(): void {
-      // 1. ΈΛΕΓΧΟΣ ΕΓΚΥΡΟΤΗΤΑΣ ΦΟΡΜΑΣ
   if (this.form.invalid) {
       this.form.markAllAsTouched(); 
       return;
     }
   
-    // 2. Reset states
+    // Reset states
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-   // 3. ΔΗΜΙΟΥΡΓΙΑ LOGIN DTO
-  const loginData: UserLoginDTO = {
+   const loginData: UserLoginDTO = {
     email: this.form.value.email!,
     password: this.form.value.password!,
     keepLoggedIn: true
@@ -126,13 +119,9 @@ passwordValidator(): ValidatorFn {
 
   console.log('Submitting login:', loginData);
 
-  // 4. ΚΛΗΣΗ AUTH SERVICE
   this.authService.login(loginData).subscribe({
     next: (response) => {
-       
       this.isLoading.set(false);
-
-      this.dashboardService.redirectToUserDashboard(response.user);
     },
     error: (error) => {
       console.error('Login error:', error);
