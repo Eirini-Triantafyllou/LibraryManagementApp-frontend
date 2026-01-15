@@ -54,12 +54,16 @@ export const routes: Routes = [
       },
     { 
       path: 'search-readers', 
-      component: BookSearch
+      component: ReaderSearch
       },  
     { 
       path: 'search-books', 
-      component: ReaderSearch
+      component: BookSearch
       },  
+    { 
+      path: 'edit-books', 
+      component: ReaderSearch
+      },    
     ]
   },
   // {path:'admin-dashboard',
