@@ -1,0 +1,267 @@
+<div class="container-fluid py-4">
+  <!-- Αναζήτηση -->
+  <mat-card class="shadow mb-4">
+    <mat-card-header class="bg-primary text-white rounded-top">
+      <mat-card-title>
+        <mat-icon class="me-2">search</mat-icon>
+        Αναζήτηση Βιβλίων
+      </mat-card-title>
+      <mat-card-subtitle class="text-white-50">
+        Αναζήτηση βιβλίων με βάση το όνομα συγγραφέα
+      </mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content class="p-4">
+      <form [formGroup]="searchForm">
+        <div class="row g-3 align-items-end">
+          <div class="col-md-9">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Όνομα Συγγραφέα</mat-label>
+              <input
+                matInput
+                type="text"
+                formControlName="authorName"
+                placeholder="π.χ. Νίκος Καζαντζάκης"
+              />
+              <mat-hint>Εισάγετε τουλάχιστον 2 χαρακτήρες</mat-hint>
+              @if (searchForm.get('authorName')?.invalid && searchForm.get('authorName')?.touched) {
+                <mat-error>
+                  @if (searchForm.get('authorName')?.errors?.['required']) {
+                    Το όνομα συγγραφέα είναι υποχρεωτικό
+                  }
+                  @if (searchForm.get('authorName')?.errors?.['minlength']) {
+                    Τουλάχιστον 2 χαρακτήρες απαιτούνται
+                  }
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+          
+          <div class="col-md-3">
+            <button
+              mat-raised-button
+              color="primary"
+              class="w-100"
+              [disabled]="loading || searchForm.invalid"
+              (click)="searchBooks(searchForm.value.authorName!, 1)"
+            >
+              @if (loading) {
+                <mat-spinner diameter="20" class="me-2"></mat-spinner>
+              } @else {
+                <mat-icon class="me-2">search</mat-icon>
+              }
+              Αναζήτηση
+            </button>
+          </div>
+        </div>
+      </form>
+      
+    </mat-card-content>  
+  </mat-card>  
+
+  @if (errorMessage) {
+    <mat-card class="mb-4 border-danger">
+      <mat-card-content class="p-3 d-flex align-items-center">
+        <mat-icon color="warn" class="me-3">error</mat-icon>
+        <span class="flex-grow-1">{{ errorMessage }}</span>
+        <button mat-icon-button (click)="errorMessage = ''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- Loading State -->
+  @if (loading) {
+    <div class="text-center py-5">
+      <mat-spinner diameter="60" class="mx-auto"></mat-spinner>
+      <p class="mt-3 text-muted">Αναζήτηση σε εξέλιξη...</p>
+    </div>
+  }
+
+  <!-- Αποτελέσματα -->
+  @if (searchResults && searchResults.data.length > 0) {
+    <mat-card class="shadow">
+      <mat-card-header class="bg-light">
+        <mat-card-title>
+          <mat-icon class="me-2">book</mat-icon>
+          Αποτελέσματα Αναζήτησης
+        </mat-card-title>
+        <mat-card-subtitle>
+          Βρέθηκαν <strong>{{ totalItems }}</strong> βιβλία
+        </mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content class="p-0">
+        <div class="table-responsive">
+          <table mat-table [dataSource]="searchResults.data" class="mat-elevation-z0 w-100">
+            
+          <!-- Τίτλος  -->
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef>Τίτλος</th>
+            <td mat-cell *matCellDef="let book">
+              <div class="fw-bold">{{ book.title }}</div>
+              @if (book.description) {
+                <div class="text-muted small mt-1">{{ book.description }}</div>
+              }
+            </td>
+          </ng-container>
+          
+          <!-- Συγγραφέας  -->
+          <ng-container matColumnDef="authorName">
+            <th mat-header-cell *matHeaderCellDef>Συγγραφέας</th>
+            <td mat-cell *matCellDef="let book">
+              {{ book.authorName }}
+            </td>
+          </ng-container>
+          
+          <!-- ISBN  -->
+          <ng-container matColumnDef="isbn">
+            <th mat-header-cell *matHeaderCellDef>ISBN</th>
+            <td mat-cell *matCellDef="let book">
+              <span class="badge bg-light text-dark font-monospace">
+                {{ book.isbn }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Έτος Έκδοσης  -->
+          <ng-container matColumnDef="publishedDate">
+            <th mat-header-cell *matHeaderCellDef>Έτος Έκδοσης</th>
+            <td mat-cell *matCellDef="let book">
+              {{ book.publishedDate | date:'yyyy' }}
+            </td>
+          </ng-container>
+
+          <!-- Διαθέσιμα Αντίτυπα  -->
+          <ng-container matColumnDef="copiesAvailable">
+            <th mat-header-cell *matHeaderCellDef>Διαθέσιμα</th>
+            <td mat-cell *matCellDef="let book">
+              <span class="badge" 
+                    [ngClass]="book.copiesAvailable > 0 ? 'bg-success' : 'bg-danger'">
+                {{ book.copiesAvailable }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Wishlist  -->
+          <ng-container matColumnDef="wishlist">
+            <th mat-header-cell *matHeaderCellDef class="text-center">Wishlist</th>
+            <td mat-cell *matCellDef="let book" class="text-center">
+              <button 
+                mat-icon-button 
+                [color]="book.isInWishlist ? 'warn' : 'primary'"
+                (click)="toggleWishlist(book)"
+                [disabled]="loadingBookId === book.id"
+                [matTooltip]="book.isInWishlist ? 'Αφαίρεση από τη wishlist' : 'Προσθήκη στη wishlist'">
+                
+                @if (loadingBookId === book.id) {
+                  <mat-spinner diameter="20"></mat-spinner>
+                } @else {
+                  <mat-icon>
+                    {{ book.isInWishlist ? 'favorite' : 'favorite_border' }}
+                  </mat-icon>
+                }
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+
+        <!-- Pagination  -->
+        @if (totalPages > 1) {
+          <div class="p-4 border-top">
+            <nav aria-label="Πλοήγηση σελίδων">
+              <div class="d-flex justify-content-between align-items-center">
+                
+                <div class="text-muted">
+                  Σελίδα <strong>{{ currentPage }}</strong> από <strong>{{ totalPages }}</strong>
+                  (Σύνολο: {{ totalItems }} βιβλία)
+                </div>
+                
+                <ul class="pagination mb-0">
+                  
+                  <li class="page-item" [class.disabled]="currentPage === 1">
+                    <button 
+                      class="page-link" 
+                      type="button"
+                      (click)="onPageChange(1)"
+                      [disabled]="currentPage === 1"
+                    >
+                      <mat-icon>first_page</mat-icon>
+                    </button>
+                  </li>
+                  
+                  <li class="page-item" [class.disabled]="currentPage === 1">
+                    <button 
+                      class="page-link" 
+                      type="button"
+                      (click)="onPageChange(currentPage - 1)"
+                      [disabled]="currentPage === 1"
+                    >
+                      <mat-icon>chevron_left</mat-icon>
+                    </button>
+                  </li>
+                  
+                  @for (page of pages; track page) {
+                    <li class="page-item" [class.active]="page === currentPage">
+                      <button 
+                        class="page-link" 
+                        type="button"
+                        (click)="onPageChange(page)"
+                      >
+                        {{ page }}
+                      </button>
+                    </li>
+                  }
+                  
+                  <li class="page-item" [class.disabled]="currentPage === totalPages">
+                    <button 
+                      class="page-link" 
+                      type="button"
+                      (click)="onPageChange(currentPage + 1)"
+                      [disabled]="currentPage === totalPages"
+                    >
+                      <mat-icon>chevron_right</mat-icon>
+                    </button>
+                  </li>
+                  
+                  <li class="page-item" [class.disabled]="currentPage === totalPages">
+                    <button 
+                      class="page-link" 
+                      type="button"
+                      (click)="onPageChange(totalPages)"
+                      [disabled]="currentPage === totalPages"
+                    >
+                      <mat-icon>last_page</mat-icon>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </nav>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- Κενά Αποτελέσματα -->
+  <!-- @if (searchResults && searchResults.data.length === 0 && !loading) {
+    <mat-card class="text-center py-5">
+      <mat-card-content>
+        <mat-icon class="display-1 text-muted mb-3">book</mat-icon>
+        <h3 class="mb-3">Δεν βρέθηκαν βιβλία</h3>
+        <p class="text-muted mb-4">
+          Δοκιμάστε με διαφορετικό όνομα συγγραφέα ή επαληθεύστε την ορθογραφία.
+        </p>
+        <button mat-raised-button color="primary" (click)="clearResults()">
+          <mat-icon class="me-2">refresh</mat-icon>
+          Καθαρισμός Αναζήτησης
+        </button>
+      </mat-card-content>
+    </mat-card>
+  } -->
+</div>
