@@ -20,5 +20,6 @@ export interface WishlistItemDTO {
   title: string;
   isbn: string;
   authorName: string;
+  description: string;
   addedAt: Date;
 }

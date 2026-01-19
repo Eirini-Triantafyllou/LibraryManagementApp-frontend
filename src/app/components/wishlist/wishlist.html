@@ -1,20 +1,13 @@
 <div class="container">
   <!-- Header (ίδιο) -->
   <div class="header">
-    <h1>
+    <h3>
       <mat-icon class="header-icon">favorite</mat-icon>
       Λίστα Επιθυμητών
       @if (wishlistItems.length > 0) {
         <span class="badge">{{ wishlistItems.length }}</span>
       }
-    </h1>
-    
-    <!-- <div class="header-actions">
-      <button mat-raised-button color="primary" (click)="goToBookSearch()">
-        <mat-icon>search</mat-icon>
-        Αναζήτηση Βιβλίων
-      </button>
-    </div> -->
+    </h3>
   </div>
 
   <!-- States (ίδια) -->
@@ -42,16 +35,12 @@
       <mat-icon class="empty-icon">favorite_border</mat-icon>
       <h2>Η Λίστα Επιθυμητών είναι Άδεια</h2>
       <p>Προσθέστε βιβλία που σας ενδιαφέρουν.</p>
-      <!-- <button mat-raised-button color="primary" (click)="goToBookSearch()">
-        <mat-icon>search</mat-icon>
-        Περιήγηση στα Βιβλία
-      </button> -->
     </div>
   }
   @else {
-    <div class="wishlist-grid">
+    <div class="wishlist-grid mb-5">
       @for (item of wishlistItems; track trackByWishlistId($index, item)) {
-        <mat-card class="wishlist-card">
+        <mat-card class="wishlist-card mt-3">
           <mat-card-header>
             <mat-card-title>{{ item.title }}</mat-card-title>
             <mat-card-subtitle>{{ item.authorName }}</mat-card-subtitle>
@@ -64,7 +53,7 @@
           </mat-card-content>
           
           <mat-card-actions alignment="end">
-            <button mat-button color="primary">
+            <button mat-button color="primary" matTooltip="{{ item.description }}">
               <mat-icon>visibility</mat-icon>
               Λεπτομέρειες
             </button>

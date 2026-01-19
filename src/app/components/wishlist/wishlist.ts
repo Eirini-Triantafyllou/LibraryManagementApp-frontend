@@ -14,6 +14,7 @@ import { WishlistItemDTO } from '../../shared/interfaces/wishlist';
 import { AppError, ApiResponse } from '../../shared/interfaces/errors';
 import { Router, RouterModule } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
+import { Book } from '../../shared/interfaces/book';
 
 @Component({
   selector: 'app-wishlist',
@@ -65,37 +66,11 @@ export class Wishlist {
           }
         },
         error: (error: AppError) => {
-          this.handleLoadError(error);
+          this.errorMessage = error.userMessage;
           this.loading = false;
           this.cdr.detectChanges();
         }
       })
-  }
-
-   private handleLoadError(error: AppError): void {
-    switch (error.status) {
-      case 401:
-        this.errorMessage = 'Παρακαλώ συνδεθείτε για να δείτε τη λίστα επιθυμητών σας.';
-        this.showSnackbar('Η σύνδεσή σας έχει λήξει.', 'error');
-        break;
-        
-      case 403:
-        this.errorMessage = 'Δεν έχετε δικαιώματα για πρόσβαση στη λίστα επιθυμητών.';
-        this.showSnackbar('Άρνηση πρόσβασης.', 'error');
-        break;
-        
-      case 404:
-        if (error.code === 'user_not_found') {
-          this.errorMessage = 'Δεν βρέθηκε ο λογαριασμός σας.';
-          this.showSnackbar('Πρόβλημα με τον λογαριασμό.', 'warning');
-        } else {
-          this.errorMessage = error.userMessage || 'Η λίστα επιθυμητών δεν βρέθηκε.';
-        }
-        break;
-        
-      default:
-        this.errorMessage = error.userMessage || 'Αποτυχία φόρτωσης της λίστας επιθυμητών.';
-    }
   }
 
   removeFromWishlist(item: WishlistItemDTO): void {
@@ -105,11 +80,11 @@ export class Wishlist {
     next: () => {
       this.wishlistItems = this.wishlistItems.filter(i => i.id !== item.id);
       this.cdr.detectChanges();
-      this.snackBar.open('Αφαιρέθηκε!', 'OK', { duration: 2000 });
+      this.showSnackbar('Αφαιρέθηκε!', 'success');
     },
-    error: (error) => {
+    error: (error: AppError) => {
       this.cdr.detectChanges();
-      this.snackBar.open('Σφάλμα: ' + error.userMessage, 'Κλείσιμο');
+      this.showSnackbar(error.userMessage, 'error');
       }
     });
   }
@@ -124,17 +99,13 @@ export class Wishlist {
         this.loadWishlist();
       },
       error: (error: AppError) => {
-        if (error.code === 'book_already_in_wishlist') {
-         this.showSnackbar('Αυτό το βιβλίο είναι ήδη στη λίστα!', 'info');
-          } else {
-            this.showSnackbar(error.userMessage || 'Αποτυχία προσθήκης.', 'error');
-          }
+          this.showSnackbar(error.userMessage, 'error');
         }
       });
     }
 
   private showSnackbar(message: string, type: 'success' | 'error' | 'warning' | 'info'): void {
-      const panelClass = `snackbar-${type}`;
+    const panelClass = `snackbar-${type}`;
     const duration = type === 'error' ? 5000 : 3000;
     
     this.snackBar.open(message, 'Κλείσιμο', {
@@ -144,6 +115,7 @@ export class Wishlist {
       panelClass: [panelClass]
     });
   }
+
 
   trackByWishlistId(index: number, item: WishlistItemDTO): number {
     return item.id;
@@ -158,5 +130,4 @@ export class Wishlist {
       year: 'numeric'
     });
   }
-
 } 
