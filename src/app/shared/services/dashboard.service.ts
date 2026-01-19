@@ -23,8 +23,8 @@ export class DashboardService {
   
   if (typeof role === 'number') {
     if (role === 0) return 'Reader';
-    if (role === 1) return 'Librarian';
-    if (role === 2) return 'Admin';
+    if (role === 1) return 'Admin';
+    if (role === 2) return 'Librarian';
 
   } else if (typeof role === 'string') {
      if (role === 'Reader') return 'Reader';
