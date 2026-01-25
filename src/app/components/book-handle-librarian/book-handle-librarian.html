@@ -1,0 +1,299 @@
+<div class="container-fluid py-4">
+  <div class="row">
+    <!-- Αναζήτηση -->
+    <div class="col-lg-4 mb-4">
+      <mat-card class="shadow h-100">
+        <mat-card-header class="bg-primary text-white rounded-top">
+          <mat-card-title>
+            <mat-icon class="me-2">search</mat-icon>
+            Αναζήτηση Βιβλίου
+          </mat-card-title>
+          <mat-card-subtitle class="text-white-50">
+            Εισαγωγή ID βιβλίου
+          </mat-card-subtitle>
+        </mat-card-header>
+        
+        <mat-card-content class="p-4">
+          <form [formGroup]="searchForm">
+            <mat-form-field appearance="outline" class="w-100 mb-3">
+              <mat-label>ID Βιβλίου</mat-label>
+              <input
+                matInput
+                type="number"
+                formControlName="bookId"
+                placeholder="π.χ. 123"
+                min="1"
+              />
+              <mat-icon matSuffix>numbers</mat-icon>
+              <mat-hint>Εισάγετε τον αριθμό ID του βιβλίου</mat-hint>
+              @if (searchForm.get('bookId')?.invalid && searchForm.get('bookId')?.touched) {
+                <mat-error>
+                  @if (searchForm.get('bookId')?.errors?.['required']) {
+                    Το ID βιβλίου είναι υποχρεωτικό
+                  }
+                  @if (searchForm.get('bookId')?.errors?.['min']) {
+                    Το ID πρέπει να είναι θετικός αριθμός
+                  }
+                </mat-error>
+              }
+            </mat-form-field>
+
+            <button
+              mat-raised-button
+              color="primary"
+              class="w-100"
+              [disabled]="searching || searchForm.invalid"
+              (click)="searchBook()"
+            >
+              @if (searching) {
+                <mat-spinner diameter="20" class="me-2"></mat-spinner>
+              } @else {
+                <mat-icon class="me-2">search</mat-icon>
+              }
+              Αναζήτηση
+            </button>
+          </form>
+
+          @if (errorMessage && !currentBook) {
+            <div class="alert alert-danger mt-3 d-flex align-items-center">
+              <mat-icon class="me-2">error</mat-icon>
+              {{ errorMessage }}
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Επεξεργασία/Διαγραφή -->
+    <div class="col-lg-8">
+      @if (currentBook) {
+        <mat-card class="shadow mb-4">
+          <mat-card-header class="bg-info text-white rounded-top">
+            <mat-card-title>
+              <mat-icon class="me-2">edit</mat-icon>
+              Επεξεργασία Βιβλίου
+            </mat-card-title>
+            <mat-card-subtitle class="text-white-50">
+              ID: {{ currentBook.id }}
+            </mat-card-subtitle>
+          </mat-card-header>
+          
+          <mat-card-content class="p-4">
+            <div class="alert alert-info mb-4">
+              <div class="d-flex align-items-center">
+                <mat-icon class="me-3">info</mat-icon>
+                <div>
+                  <strong>Βιβλίο που επεξεργάζεστε:</strong>
+                  <div class="small">{{ currentBook.title }} - {{ currentBook.authorFullName }}</div>
+                </div>
+              </div>
+            </div>
+
+            <form [formGroup]="editForm">
+              <div class="row g-3">
+                
+                <div class="col-md-12">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Τίτλος Βιβλίου</mat-label>
+                    <input matInput formControlName="title" placeholder="Τίτλος">
+                    <mat-icon matSuffix>title</mat-icon>
+                    @if (editForm.get('title')?.invalid && editForm.get('title')?.touched) {
+                      <mat-error>
+                        @if (editForm.get('title')?.errors?.['required']) {
+                          Ο τίτλος είναι υποχρεωτικός
+                        }
+                        @if (editForm.get('title')?.errors?.['minlength']) {
+                          Τουλάχιστον 5 χαρακτήρες
+                        }
+                        @if (editForm.get('title')?.errors?.['maxlength']) {
+                          Μέχρι 100 χαρακτήρες
+                        }
+                      </mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <div class="col-12">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Περιγραφή</mat-label>
+                    <textarea 
+                      matInput 
+                      formControlName="description" 
+                      rows="3"
+                      placeholder="Σύντομη περιγραφή του βιβλίου..."
+                    ></textarea>
+                    @if (editForm.get('description')?.invalid && editForm.get('description')?.touched) {
+                      <mat-error>
+                        @if (editForm.get('description')?.errors?.['required']) {
+                          Η περιγραφή είναι υποχρεωτική
+                        }
+                        @if (editForm.get('description')?.errors?.['minlength']) {
+                          Τουλάχιστον 5 χαρακτήρες
+                        }
+                        @if (editForm.get('description')?.errors?.['maxlength']) {
+                          Μέχρι 500 χαρακτήρες
+                        }
+                      </mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Διαθέσιμα Αντίτυπα</mat-label>
+                    <input 
+                      matInput 
+                      type="number" 
+                      formControlName="copiesAvailable"
+                      min="0" 
+                      max="1000"
+                    >
+                    <mat-icon matSuffix>library_books</mat-icon>
+                    @if (editForm.get('copiesAvailable')?.invalid && editForm.get('copiesAvailable')?.touched) {
+                      <mat-error>
+                        @if (editForm.get('copiesAvailable')?.errors?.['required']) {
+                          Ο αριθμός αντιτύπων είναι υποχρεωτικός
+                        }
+                        @if (editForm.get('copiesAvailable')?.errors?.['min']) {
+                          Ο ελάχιστος αριθμός είναι 0
+                        }
+                      </mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <mat-divider class="my-4"></mat-divider>
+
+              <!-- Κουμπιά Ενεργειών -->
+              <div class="d-flex justify-content-between">
+                <div>
+                  <button 
+                    mat-raised-button 
+                    color="primary"
+                    [disabled]="updating || editForm.invalid"
+                    (click)="updateBook()"
+                  >
+                    @if (updating) {
+                      <mat-spinner diameter="20" class="me-2"></mat-spinner>
+                    } @else {
+                      <mat-icon class="me-2">save</mat-icon>
+                    }
+                    Αποθήκευση Αλλαγών
+                  </button>
+
+                  <button 
+                    mat-stroked-button 
+                    color="basic"
+                    class="ms-2"
+                    (click)="resetForm()"
+                  >
+                    <mat-icon class="me-2">clear</mat-icon>
+                    Επιστροφή
+                  </button>
+                </div>
+
+                <button 
+                  mat-raised-button 
+                  color="warn"
+                  [disabled]="deleting"
+                  (click)="deleteBook()"
+                >
+                  @if (deleting) {
+                    <mat-spinner diameter="20" class="me-2"></mat-spinner>
+                  } @else {
+                    <mat-icon class="me-2">delete</mat-icon>
+                  }
+                  Διαγραφή Βιβλίου
+                </button>
+              </div>
+            </form>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Πληροφορίες Βιβλίου -->
+        <mat-card class="shadow">
+          <mat-card-header class="bg-light">
+            <mat-card-title>
+              <mat-icon class="me-2">info</mat-icon>
+              Πληροφορίες Βιβλίου
+            </mat-card-title>
+          </mat-card-header>
+          
+          <mat-card-content class="p-4">
+            <div class="row">
+              <div class="col-md-6">
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <th scope="row" class="w-25">ID:</th>
+                      <td><strong>{{ currentBook.id }}</strong></td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Τίτλος:</th>
+                      <td>{{ currentBook.title }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Συγγραφέας:</th>
+                      <td>{{ currentBook.authorFullName }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">ISBN:</th>
+                      <td><code>{{ currentBook.isbn }}</code></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="col-md-6">
+                <table class="table">
+                  <tbody>
+                    <tr>
+                      <th scope="row" class="w-25">Έκδοση:</th>
+                      <td>{{ currentBook.publishedDate | date:'dd/MM/yyyy' }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Διαθέσιμα:</th>
+                      <td>
+                        <span class="badge" [ngClass]="currentBook.copiesAvailable > 0 ? 'bg-success' : 'bg-danger'">
+                          {{ currentBook.copiesAvailable }} αντίτυπα
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Κατάσταση:</th>
+                      <td>
+                        <span class="badge" [ngClass]="currentBook.copiesAvailable > 0 ? 'bg-success' : 'bg-warning'">
+                          {{ currentBook.copiesAvailable > 0 ? 'Διαθέσιμο' : 'Μη Διαθέσιμο' }}
+                        </span>
+                      </td>
+                    </tr>
+                    @if (currentBook.description) {
+                      <tr>
+                        <th scope="row">Περιγραφή:</th>
+                        <td class="small">{{ currentBook.description }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      } @else {
+        <!-- Κατάσταση χωρίς επιλεγμένο βιβλίο -->
+        <mat-card class="shadow text-center py-5">
+          <mat-card-content>
+            <mat-icon class="display-1 text-muted mb-3" style="font-size: 80px;">
+              book
+            </mat-icon>
+            <h3 class="mb-3">Δεν έχει επιλεγεί βιβλίο</h3>
+            <p class="text-muted mb-4">
+              Εισάγετε το ID ενός βιβλίου για να ξεκινήσετε την επεξεργασία
+            </p>
+            <mat-icon class="text-muted" style="font-size: 40px;">arrow_back</mat-icon>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  </div>
+</div>
