@@ -1,0 +1,122 @@
+<div>
+  <h4>Εισαγωγή νέου βιβλίου</h4>
+
+  @if(createStatus.message != "Not attempted yet") {
+    @if(createStatus.success){
+      <div class="alert alert-success mt-2 w-50">
+        {{createStatus.message}}
+      </div>
+      } @else {
+      <div class="alert alert-danger mt-2 w-50">
+        Error: {{createStatus.message}}
+      </div>
+    }
+  }
+
+  <form class="d-flex flex-column" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+    <mat-form-field appearance="outline">
+      <mat-label>Τίτλος</mat-label>
+      <input type="text" matInput formControlName="title" placeholder="Εισάγετε τίτλο βιβλίου">
+      @if (form.get('title')?.touched) {
+        @if (form.get('title')?.hasError('required')) {
+          <mat-error>Ο τίτλος είναι υποχρεωτικός</mat-error>
+        }
+        @if (form.get('title')?.hasError('minlength')) {
+          <mat-error>Απαιτούνται τουλάχιστον 2 χαρακτήρες</mat-error>
+        }
+        @if (form.get('title')?.hasError('maxlength')) {
+          <mat-error>Ο τίτλος δεν μπορεί να υπερβαίνει τους 100 χαρακτήρες</mat-error>
+        }
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Όνομα συγγραφέα</mat-label>
+      <input type="text" matInput formControlName="authorFullName"
+        placeholder="Εισάγετε το πλήρες όνομα του συγγραφέα">
+      @if (form.get('authorFullName')?.touched) {
+        @if (form.get('authorFullName')?.hasError('required')) {
+          <mat-error>Το όνομα του συγγραφέα είναι υποχρεωτικό</mat-error>
+        }
+        @if (form.get('authorFullName')?.hasError('minlength')) {
+          <mat-error>Απαιτούνται τουλάχιστον 5 χαρακτήρες</mat-error>
+        }
+        @if (form.get('authorFullName')?.hasError('maxlength')) {
+          <mat-error>Το όνομα συγγραφέα δεν μπορεί να υπερβαίνει τους 100 χαρακτήρες</mat-error>
+        }
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Περιγραφή</mat-label>
+      <textarea matInput formControlName="description"
+        placeholder="Εισάγετε περιγραφή" rows="4"></textarea>
+      @if (form.get('description')?.touched) {
+        @if (form.get('description')?.hasError('required')) {
+          <mat-error>Η περιγραφή είναι υποχρεωτική</mat-error>
+        }
+        @if (form.get('description')?.hasError('minlength')) {
+          <mat-error>Απαιτούνται τουλάχιστον 10 χαρακτήρες</mat-error>
+        }
+        @if (form.get('description')?.hasError('maxlength')) {
+          <mat-error>Η περιγραφή δεν μπορεί να υπερβαίνει τους 500 χαρακτήρες</mat-error>
+        }
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>ISBN</mat-label>
+      <input type="text" matInput formControlName="isbn"
+        placeholder="Εισάγετε ISBN (10 ή 13 ψηφία)">
+      @if (form.get('isbn')?.touched) {
+        @if (form.get('isbn')?.hasError('required')) {
+          <mat-error>Το ISBN είναι υποχρεωτικό</mat-error>
+        }
+        @if (form.get('isbn')?.hasError('pattern')) {
+          <mat-error>Το ISBN πρέπει να είναι 10 με 13 ψηφία </mat-error>
+        }
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Ημερομηνία έκδοσης</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="publishedDate">
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+     <mat-datepicker #picker></mat-datepicker>
+      @if (form.get('publishedDate')?.touched) {
+        @if (form.get('publishedDate')?.hasError('required')) {
+          <mat-error>Η ημερομηνία έκδοσης είναι υποχρεωτική</mat-error>
+        }
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Διαθέσιμα αντίτυπα</mat-label>
+      <input type="number" matInput formControlName="copiesAvailable"
+        placeholder="Εισάγετε αριθμό αντιτύπων">
+      @if (form.get('copiesAvailable')?.touched) {
+        @if (form.get('copiesAvailable')?.hasError('required')) {
+          <mat-error>Ο αριθμός αντιτύπων είναι υποχρεωτικός</mat-error>
+        }
+      }
+    </mat-form-field>
+
+    <button 
+      mat-raised-button
+      color="primary"
+      type="submit"
+      class="mt-3"
+      [disabled]="form.invalid">
+      Υποβολή
+    </button>
+  </form>
+
+  <div class="text-center mt-2">
+    <a routerLink="/librarian-dashboard" 
+      class="btn btn-outline-secondary btn-sm mt-2 mb-5">
+      Επιστροφή
+    </a>
+  </div>
+
+</div>
