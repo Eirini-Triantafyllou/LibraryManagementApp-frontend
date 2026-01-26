@@ -5,7 +5,8 @@ import { UserRole } from "../enums/user-role";
 
 export interface Reader extends BaseEntity {
   id: number;
-  fullName: string;
+  firstname: string;
+  lastname: string;
   email: string;
   phoneNumber: string;
   address: string;

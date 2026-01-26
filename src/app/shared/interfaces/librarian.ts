@@ -4,7 +4,8 @@ import { Reader } from "./reader";
 
 export interface Librarian extends BaseEntity {
   id: number;
-  fullName: string;
+  firstname: string;
+  lastname: string;
   email: string;
   phoneNumber: string;
   hireDate: Date;
