@@ -1,12 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { AuthService } from '../../shared/services/auth.service';
-import { 
-  FormControl, 
-  FormGroup, 
-  AbstractControl, 
-  ReactiveFormsModule, 
-  Validators 
-} from '@angular/forms';
+import { FormControl, FormGroup, AbstractControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSelect, MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -85,7 +79,6 @@ export class SignupUser {
         phoneNumber: formValue.phoneNumber!,
         address: formValue.address!,
         userRole: formValue.userRole! as unknown as UserRole
-        // userRole: Number(formValue.userRole!)
       }
   
       this.authService.signUpUser(user).subscribe({
@@ -102,11 +95,11 @@ export class SignupUser {
         error: (error) => {
           console.log("There was error", error);
           let errorMessage = 'Σφάλμα κατά την εγγραφή';
-         if (error.status === 400) {
-        errorMessage = error.error?.message || 'Μη έγκυρα δεδομένα';
-        } else if (error.status === 409) {
-          errorMessage = 'Το username ή email υπάρχει ήδη';
-        }
+          if (error.status === 400) {
+            errorMessage = error.error?.message || 'Μη έγκυρα δεδομένα';
+            } else if (error.status === 409) {
+            errorMessage = 'Το username ή email υπάρχει ήδη';
+            }
           this.registrationStatus = {
             success: false, 
             message: error.error?.message || "An error occurred. Please try again."
