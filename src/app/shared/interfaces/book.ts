@@ -1,6 +1,7 @@
 import { BaseEntity } from "./base-entity";
 import { Author } from "./author";
 import { Reader } from "./reader";
+import { StickyOffset } from "@angular/cdk/table";
 
 export interface Book extends BaseEntity {
   id: number;
@@ -16,7 +17,7 @@ export interface Book extends BaseEntity {
   readers?: Reader[];
 }
 
-// DTO
+// DTOs
 
 export interface BookByAuthorDTO {
   id: number;
@@ -25,7 +26,22 @@ export interface BookByAuthorDTO {
   isbn: string;
   publishedDate: Date;
   copiesAvailable: number;
-  authorName: string;
+  authorFullName: string;
   authorId: number;
   isInWishlist?: boolean;
+}
+
+export interface CreateBookDTO {
+  title: string;
+  authorFullName: string;
+  description: string;
+  isbn: string;
+  publishedDate: Date;
+  copiesAvailable: number;
+}
+
+export interface UpdateBookDTO {
+  title: string;
+  description: string;
+  copiesAvailable: number;
 }

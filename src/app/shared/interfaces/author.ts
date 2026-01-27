@@ -3,11 +3,10 @@ import { Book } from "./book";
 
 export interface Author extends BaseEntity {
   id: number;
-  firstname: string;
-  lastname: string;
+  authorFullName: string;
   biography: string;
   dateOfBirth: Date;
 
-  books?: Book[];   // Navigation properties (για relations)
+  books?: Book[];   // Navigation properties (for relations)
 
 }
