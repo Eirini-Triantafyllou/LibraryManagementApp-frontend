@@ -24,7 +24,7 @@ export class WishlistService {
     }
 
    getUserWishlist(): Observable<WishlistItemDTO[]> {
-    const endpoint = `${this.apiUrl}/api/Wishlist/GetUserWishlist`;
+    const endpoint = `${this.apiUrl}/api/Wishlists/GetUserWishlist`;
 
     return this.http.get<WishlistItemDTO[]>(endpoint).pipe(
       catchError((error: HttpErrorResponse) => {
@@ -34,7 +34,7 @@ export class WishlistService {
     } 
 
   checkIfInWishlist(bookId: number): Observable<boolean> {
-    const endpoint = `${this.apiUrl}/api/Wishlist/CheckIfInWishlist/${bookId}`;
+    const endpoint = `${this.apiUrl}/api/Wishlists/CheckIfInWishlist/${bookId}`;
 
     return this.http.get<boolean>(endpoint).pipe(
       catchError((error: HttpErrorResponse) => {
@@ -44,7 +44,7 @@ export class WishlistService {
     }
 
   addToWishlist(bookId: number): Observable<ApiResponse>{
-    const endpoint = `${this.apiUrl}/api/Wishlist/AddToWishlist/${bookId}`;
+    const endpoint = `${this.apiUrl}/api/Wishlists/AddToWishlist/${bookId}`;
 
     return this.http.post<any>(endpoint, {}).pipe(
       catchError((error: HttpErrorResponse) => {
@@ -54,7 +54,7 @@ export class WishlistService {
     }
 
     removeFromWishlist(bookId: number): Observable<ApiResponse>{
-    const endpoint = `${this.apiUrl}/api/Wishlist/RemoveFromWishlist/${bookId}`;
+    const endpoint = `${this.apiUrl}/api/Wishlists/RemoveFromWishlist/${bookId}`;
 
     return this.http.delete<any>(endpoint).pipe(
       catchError((error: HttpErrorResponse) => {

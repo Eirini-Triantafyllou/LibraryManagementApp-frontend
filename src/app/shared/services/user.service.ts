@@ -14,7 +14,7 @@ export class UserService {
 
   private apiUrl = environment.apiUrl;
 
-  updateUser(userId: string, data: UpdateUserReaderDTO): Observable<UserReadOnlyDTO>{
+  updateUser(userId: number, data: UpdateUserReaderDTO): Observable<UserReadOnlyDTO>{
     const endpoint = `${this.apiUrl}/api/Users/UpdateUser/${userId}`;
     return this.http.put<UserReadOnlyDTO>(endpoint, data);
   }

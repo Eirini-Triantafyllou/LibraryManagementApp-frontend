@@ -98,7 +98,7 @@ export class AuthService {
   signUpUser(data:UserSignupDTO): Observable<UserReadOnlyDTO> {
     const endpoint = `${this.apiUrl}/api/Users/SignUpUser`;
     return this.http.post<UserReadOnlyDTO>(endpoint, data);   
-    }
+  }
 
 
   // Βοηθητική μέθοδος για μετατροπή UserReadOnlyDTO σε User
