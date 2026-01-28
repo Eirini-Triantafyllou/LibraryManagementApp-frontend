@@ -36,8 +36,7 @@ export class LoginUser {
     ]),
     keepLoggedIn: new FormControl(false)     
   });
-email: any;
-password: any;
+
 
 
 passwordValidator(): ValidatorFn {
@@ -126,7 +125,7 @@ passwordValidator(): ValidatorFn {
     error: (error) => {
       console.error('Login error:', error);
       this.isLoading.set(false);
-      this.errorMessage.set(error.error?.message || 'Login failed');
+      this.errorMessage.set(error.error?.message || 'Η είσοδος απέτυχε. Προσπαθήστε ξανά.');
       }
     });
   }
