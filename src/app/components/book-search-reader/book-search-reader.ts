@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { BookService } from '../../shared/services/book.reader.service';
+import { BookService } from '../../shared/services/book.service';
 import { BookByAuthorDTO } from '../../shared/interfaces/book';
 import { PaginatedResult } from '../../shared/interfaces/pagination';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -17,6 +17,7 @@ import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { WishlistService } from '../../shared/services/wishlist.service';
 import { AuthService } from '../../shared/services/auth.service';
 import { MatMenuModule } from '@angular/material/menu';
+import { AppError } from '../../shared/interfaces/errors';
 
 
 @Component({
@@ -44,6 +45,7 @@ export class BookSearch implements OnInit {
   bookService = inject(BookService);
   wishlistService = inject(WishlistService);
   authService = inject(AuthService);
+  snackBar = inject(MatSnackBar);
 
   loading = false;
   errorMessage = '';
@@ -52,7 +54,7 @@ export class BookSearch implements OnInit {
 
   loadingBookId: number | null = null;
 
-  displayedColumns: string[] = ['title', 'authorName', 'isbn', 'publishedDate', 'copiesAvailable', 'wishlist'];
+  displayedColumns: string[] = ['title', 'authorFullName', 'isbn', 'publishedDate', 'copiesAvailable', 'wishlist'];
 
   // Pagination
   currentPage = 1;
@@ -61,11 +63,11 @@ export class BookSearch implements OnInit {
   totalPages = 0;
 
   searchForm = new FormGroup({
-    authorName: new FormControl('',[Validators.required, Validators.minLength(2)])
+    authorFullName: new FormControl('',[Validators.required, Validators.minLength(2)])
   });
 
   ngOnInit(): void {
-    this.searchForm.get('authorName')?.valueChanges
+    this.searchForm.get('authorFullName')?.valueChanges
     .subscribe(value => {
       if (value && value.length >= 2) {
         this.searchBooks(value, 1);
@@ -73,8 +75,8 @@ export class BookSearch implements OnInit {
     });
   }
 
-  searchBooks(authorName: string, pageNumber: number): void {
-    if (!authorName?.trim()) {
+  searchBooks(authorFullName: string, pageNumber: number): void {
+    if (!authorFullName?.trim()) {
     this.errorMessage = 'Παρακαλώ εισάγετε όνομα συγγραφέα';
     return;
     }
@@ -84,7 +86,7 @@ export class BookSearch implements OnInit {
     this.successMessage = '';
     this.currentPage = pageNumber;
 
-    this.bookService.searchBooksByAuthor(authorName, pageNumber, this.pageSize)
+    this.bookService.searchBooksByAuthor(authorFullName, pageNumber, this.pageSize)
     .subscribe({
       next: (result) => {
         this.searchResults = result;
@@ -93,7 +95,7 @@ export class BookSearch implements OnInit {
         this.loading = false;
 
         if (result.data.length === 0) {
-          this.errorMessage = `Δε βρέθηκαν βιβλία για τον συγγραφέα "${authorName}"`;
+          this.errorMessage = `Δε βρέθηκαν βιβλία για τον συγγραφέα "${authorFullName}"`;
         }
       },
       error: (error) => {
@@ -125,7 +127,7 @@ export class BookSearch implements OnInit {
             this.loadingBookId = null;
             setTimeout(() => this.successMessage = '', 2000);
           },
-         error: (error) => {
+         error: (error: AppError) => {
           console.error('Error adding to wishlist:', error);
           this.loadingBookId = null;
           this.errorMessage = error.userMessage || 'Σφάλμα προσθήκης στη wishlist';
@@ -143,7 +145,7 @@ export class BookSearch implements OnInit {
           this.loadingBookId = null;
           setTimeout(() => this.successMessage = '', 2000);
         },
-        error: (error) => {
+        error: (error: AppError) => {
           console.error('Error removing from wishlist:', error);
         this.loadingBookId = null;
         this.errorMessage = error.userMessage || 'Σφάλμα αφαίρεσης από τη wishlist';
@@ -156,8 +158,8 @@ export class BookSearch implements OnInit {
     if (page < 1 || page > this.totalPages || page === this.currentPage) {
       return;
     }
-    const authorName = this.searchForm.get('authorName')?.value;
-    this.searchBooks(authorName!, page);
+    const authorFullName = this.searchForm.get('authorFullName')?.value;
+    this.searchBooks(authorFullName!, page);
   }
 
   get pages(): number[] {

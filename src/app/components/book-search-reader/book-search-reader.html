@@ -20,17 +20,17 @@
               <input
                 matInput
                 type="text"
-                formControlName="authorName"
+                formControlName="authorFullName"
                 placeholder="π.χ. Νίκος Καζαντζάκης"
               />
               <mat-hint>Εισάγετε τουλάχιστον 2 χαρακτήρες</mat-hint>
-              @if (searchForm.get('authorName')?.invalid && searchForm.get('authorName')?.touched) {
+              @if (searchForm.get('authorFullName')?.invalid && searchForm.get('authorFullName')?.touched) {
                 <mat-error>
-                  @if (searchForm.get('authorName')?.errors?.['required']) {
+                  @if (searchForm.get('authorFullName')?.errors?.['required']) {
                     Το όνομα συγγραφέα είναι υποχρεωτικό
                   }
-                  @if (searchForm.get('authorName')?.errors?.['minlength']) {
-                    Τουλάχιστον 2 χαρακτήρες απαιτούνται
+                  @if (searchForm.get('authorFullName')?.errors?.['minlength']) {
+                    Πληκτρολογήστε τουλάχιστον 2 χαρακτήρες 
                   }
                 </mat-error>
               }
@@ -43,7 +43,7 @@
               color="primary"
               class="w-100"
               [disabled]="loading || searchForm.invalid"
-              (click)="searchBooks(searchForm.value.authorName!, 1)"
+              (click)="searchBooks(searchForm.value.authorFullName?.trim() || '', 1)"
             >
               @if (loading) {
                 <mat-spinner diameter="20" class="me-2"></mat-spinner>
@@ -108,10 +108,10 @@
           </ng-container>
           
           <!-- Συγγραφέας  -->
-          <ng-container matColumnDef="authorName">
+          <ng-container matColumnDef="authorFullName">
             <th mat-header-cell *matHeaderCellDef>Συγγραφέας</th>
             <td mat-cell *matCellDef="let book">
-              {{ book.authorName }}
+              {{ book.authorFullName }}
             </td>
           </ng-container>
           
@@ -247,21 +247,4 @@
       </mat-card-content>
     </mat-card>
   }
-
-  <!-- Κενά Αποτελέσματα -->
-  <!-- @if (searchResults && searchResults.data.length === 0 && !loading) {
-    <mat-card class="text-center py-5">
-      <mat-card-content>
-        <mat-icon class="display-1 text-muted mb-3">book</mat-icon>
-        <h3 class="mb-3">Δεν βρέθηκαν βιβλία</h3>
-        <p class="text-muted mb-4">
-          Δοκιμάστε με διαφορετικό όνομα συγγραφέα ή επαληθεύστε την ορθογραφία.
-        </p>
-        <button mat-raised-button color="primary" (click)="clearResults()">
-          <mat-icon class="me-2">refresh</mat-icon>
-          Καθαρισμός Αναζήτησης
-        </button>
-      </mat-card-content>
-    </mat-card>
-  } -->
 </div>
