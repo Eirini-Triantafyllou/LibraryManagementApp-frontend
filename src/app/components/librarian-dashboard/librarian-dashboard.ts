@@ -16,7 +16,7 @@ export class LibrarianDashboard {
 
   menu = [
     {text:"👤 Αναζήτηση αναγνωστών", link:'search-readers'},
-    {text:"🔍 Αναζήτηση βιβλίων", link:'search-books'},
-    {text:"📚  Επεξεργασία εγγραφών (εισαγωγή/ αφαίρεση βιβλίων)", link:'edit-books'}
+    {text:"🔍 Αναζήτηση/ επεξεργασία εγγραφών", link:'search-edit-books'},
+    {text:"📚  Προσθήκη εγγραφών", link:'add-books'}
   ]
 }

@@ -16,6 +16,8 @@ export class AdminDashboard {
 
   menu = [
     {text:"👤 Αναζήτηση αναγνωστών", link: 'search-readers'}, 
-    {text:"👤 Αναζήτηση εργαζόμενων", link: 'search-librarians'}
+    {text:"👤 Αναζήτηση εργαζόμενων", link: 'search-librarians'},
+    {text:"🔍 Αναζήτηση/ επεξεργασία εγγραφών", link:'search-edit-books'},
+    {text:"📚  Προσθήκη εγγραφών", link:'add-books'}
   ]
 }
