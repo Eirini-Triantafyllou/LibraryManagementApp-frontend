@@ -5,13 +5,18 @@ import { roleGuard } from './shared/guards/role-guard';
 import { UserRole } from './shared/enums/user-role';
 import { ReaderDashboard } from './components/reader-dashboard/reader-dashboard';
 import { LibrarianDashboard } from './components/librarian-dashboard/librarian-dashboard';
+import { AdminDashboard } from './components/admin-dashboard/admin-dashboard';
 import { SignupUser } from './components/signup-user/signup-user';
 import { UpdateUser } from './components/update-user/update-user';
 import { ReaderHome } from './components/reader-home/reader-home';
-import { BookSearch } from './components/book-search/book-search';
+import { BookSearch } from './components/book-search-reader/book-search-reader';
 import { Wishlist } from './components/wishlist/wishlist';
 import { LibrarianHome } from './components/librarian-home/librarian-home';
 import { ReaderSearch } from './components/reader-search/reader-search';
+import { UnderConstruction } from './components/under-construction/under-construction';
+import { BookHandleLibrarian } from './components/book-handle-librarian/book-handle-librarian';
+import { CreateBookLibrarian } from './components/create-book-librarian/create-book-librarian';
+import { AdminHome } from './components/admin-home/admin-home';
 
 
 export const routes: Routes = [
@@ -27,6 +32,10 @@ export const routes: Routes = [
       component: ReaderHome,
       pathMatch: 'full'
       },
+     { 
+      path: 'current-borrowed-books', 
+      component: UnderConstruction,
+      }, 
     { 
       path: 'search-books', 
       component: BookSearch
@@ -54,23 +63,47 @@ export const routes: Routes = [
       },
     { 
       path: 'search-readers', 
-      component: ReaderSearch
+      component: UnderConstruction
       },  
     { 
-      path: 'search-books', 
-      component: BookSearch
+      path: 'search-edit-books', 
+      component: BookHandleLibrarian
       },  
     { 
-      path: 'edit-books', 
-      component: ReaderSearch
+      path: 'add-books', 
+      component: CreateBookLibrarian
       },    
     ]
   },
-  // {path:'admin-dashboard',
-  //   component: AdminDashboard,
-  //  canActivate: [authGuard, roleGuard],    
-  //  data: { requiredRole: UserRole.Admin}
-  //   },
+  {path:'admin-dashboard',
+    component: AdminDashboard,
+   canActivate: [authGuard, roleGuard],    
+   data: { requiredRole: UserRole.Admin},
+    children: [
+    { 
+      path: '', 
+      component: AdminHome,
+      pathMatch: 'full'
+      },
+    { 
+      path: 'search-readers', 
+      component: UnderConstruction
+      },  
+    { 
+      path: 'search-librarians', 
+      component: UnderConstruction
+      },   
+
+    { 
+      path: 'search-edit-books', 
+      component: BookHandleLibrarian
+      },  
+    { 
+      path: 'add-books', 
+      component: CreateBookLibrarian
+      },    
+    ]
+    },
   // {path: 'unauthorized', component: Unauthorized},        // To Do
   { path: '', redirectTo: '/login-user', pathMatch: 'full' },
 ];
