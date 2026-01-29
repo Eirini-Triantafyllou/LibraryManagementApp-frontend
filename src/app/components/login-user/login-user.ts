@@ -125,7 +125,8 @@ passwordValidator(): ValidatorFn {
     error: (error) => {
       console.error('Login error:', error);
       this.isLoading.set(false);
-      this.errorMessage.set(error.error?.message || 'Η είσοδος απέτυχε. Προσπαθήστε ξανά.');
+      // this.errorMessage.set(error.error?.message || 'Η είσοδος απέτυχε. Προσπαθήστε ξανά.');
+      this.errorMessage.set('Η είσοδος απέτυχε. Προσπαθήστε ξανά.');
       }
     });
   }
