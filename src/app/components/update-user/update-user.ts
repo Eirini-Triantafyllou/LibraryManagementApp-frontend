@@ -34,7 +34,7 @@ export class UpdateUser implements OnInit {
   userService = inject(UserService);
   router = inject(Router);
   route = inject(ActivatedRoute);
-  userId: string = '';
+  userId: number = 0;
 
     updateStatus: {success: boolean, message:string} = {
       success: false,
@@ -113,6 +113,6 @@ export class UpdateUser implements OnInit {
     }
 
     onCancel(): void {
-    this.router.navigate(['login-user']);
+    this.router.navigate(['reader-dashboard']);
   }   
 }
