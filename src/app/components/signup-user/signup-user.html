@@ -18,7 +18,7 @@
     <mat-form-field appearance="outline">
       <mat-label>Όνομα χρήστη</mat-label>
       <input type="text" matInput formControlName="username"
-      placeholder="Εισάγετε όνομα">
+      placeholder="Εισάγετε όνομα χρήστη">
       @if (form.get('username')?.hasError('required') && 
        form.get('username')?.touched) {
       <mat-error>Το όνομα χρήστη είναι υποχρεωτικό</mat-error>
