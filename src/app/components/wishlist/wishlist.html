@@ -1,5 +1,5 @@
 <div class="container">
-  <!-- Header (ίδιο) -->
+  <!-- Header -->
   <div class="header">
     <h3>
       <mat-icon class="header-icon">favorite</mat-icon>
@@ -10,7 +10,7 @@
     </h3>
   </div>
 
-  <!-- States (ίδια) -->
+  <!-- States -->
   @if (loading) {
     <div class="loading-state">
       <mat-spinner diameter="50"></mat-spinner>
@@ -43,10 +43,10 @@
         <mat-card class="wishlist-card mt-3">
           <mat-card-header>
             <mat-card-title>{{ item.title }}</mat-card-title>
-            <mat-card-subtitle>{{ item.authorName }}</mat-card-subtitle>
           </mat-card-header>
           
           <mat-card-content>
+            <p><strong>Όνομα συγγραφέα:</strong> {{ item.authorFullName }}</p>
             <p><strong>ISBN:</strong> {{ item.isbn }}</p>
             <p><strong>Προστέθηκε:</strong> {{ formatDate(item.addedAt) }}</p>
             <p><strong>Book ID:</strong> {{ item.bookId }}</p>
