@@ -2,8 +2,8 @@
     <a class="navbar-brand ms-3 cursor-pointer" role="button" routerLink="">Library Management App</a>
     @if (user()) {
         <span class="me-3 d-flex gap-2 text-light">
-            Welcome, {{user()?.username}}
-            <span class="ms-3" role="button" (click)="logoutUser()">Logout</span>
+            Καλώς ήρθες, {{user()?.username}}
+            <span class="ms-3" role="button" (click)="logoutUser()">Έξοδος</span>
         </span>
     }
 </nav>
