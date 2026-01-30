@@ -83,7 +83,6 @@ export class SignupUser {
   
       this.authService.signUpUser(user).subscribe({
         next: (response) => {
-          // this.form.reset();
           console.log('User created:', response);
           this.router.navigate(['/login-user']);
 

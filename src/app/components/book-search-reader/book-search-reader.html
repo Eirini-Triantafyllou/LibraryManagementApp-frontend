@@ -96,7 +96,6 @@
         <div class="table-responsive">
           <table mat-table [dataSource]="searchResults.data" class="mat-elevation-z0 w-100">
             
-          <!-- Τίτλος  -->
           <ng-container matColumnDef="title">
             <th mat-header-cell *matHeaderCellDef>Τίτλος</th>
             <td mat-cell *matCellDef="let book">
@@ -107,7 +106,6 @@
             </td>
           </ng-container>
           
-          <!-- Συγγραφέας  -->
           <ng-container matColumnDef="authorFullName">
             <th mat-header-cell *matHeaderCellDef>Συγγραφέας</th>
             <td mat-cell *matCellDef="let book">
@@ -115,7 +113,6 @@
             </td>
           </ng-container>
           
-          <!-- ISBN  -->
           <ng-container matColumnDef="isbn">
             <th mat-header-cell *matHeaderCellDef>ISBN</th>
             <td mat-cell *matCellDef="let book">
@@ -125,7 +122,6 @@
             </td>
           </ng-container>
 
-          <!-- Έτος Έκδοσης  -->
           <ng-container matColumnDef="publishedDate">
             <th mat-header-cell *matHeaderCellDef>Έτος Έκδοσης</th>
             <td mat-cell *matCellDef="let book">
@@ -133,7 +129,6 @@
             </td>
           </ng-container>
 
-          <!-- Διαθέσιμα Αντίτυπα  -->
           <ng-container matColumnDef="copiesAvailable">
             <th mat-header-cell *matHeaderCellDef>Διαθέσιμα</th>
             <td mat-cell *matCellDef="let book">
@@ -144,7 +139,6 @@
             </td>
           </ng-container>
 
-          <!-- Wishlist  -->
           <ng-container matColumnDef="wishlist">
             <th mat-header-cell *matHeaderCellDef class="text-center">Wishlist</th>
             <td mat-cell *matCellDef="let book" class="text-center">

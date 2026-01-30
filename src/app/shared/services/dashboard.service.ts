@@ -35,7 +35,6 @@ export class DashboardService {
   return 'Reader'; // Default
 }
 
-  // Παίρνει το σωστό dashboard path για τον τρέχοντα χρήστη
   getUserDashboardPath(): string {
     const user = this.authService.currentUser();
     
@@ -55,7 +54,7 @@ export class DashboardService {
     }
   }
 
-  // Κάνει redirect στο σωστό dashboard
+  // Redirect στο σωστό dashboard
   redirectToUserDashboard(user?: UserReadOnlyDTO): void {
     const role = user?.userRole?.toString() || 'Reader';
     
@@ -76,7 +75,7 @@ export class DashboardService {
 
 
   /**
-   * Επιστρέφει το dashboard component ανάλογα με το role
+   * Dashboard component ανάλογα με το role
    */
   getUserDashboardComponent(): string {
     const user = this.authService.currentUser();

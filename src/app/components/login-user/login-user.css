@@ -51,10 +51,6 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* .btn-primary:disabled {
-  background-color: #6c757d;
-  border-color: #6c757d;
-} */
 
 /* Style για το disabled state χωρίς να κρύβει */
 .btn.disabled {
